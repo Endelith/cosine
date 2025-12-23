@@ -113,6 +113,18 @@ public interface StreamCodec<T> {
         }
     };
 
+    StreamCodec<Integer> UNSIGNED_SHORT = new StreamCodec<>() {
+        @Override
+        public void write(ByteBuf buffer, Integer value) {
+            buffer.writeShort(value & 0xFFFF);
+        }
+
+        @Override
+        public Integer read(ByteBuf buffer) {
+            return buffer.readUnsignedShort();
+        }
+    };
+
     StreamCodec<Integer> INT = new StreamCodec<>() {
         @Override
         public void write(ByteBuf buffer, Integer value) {
