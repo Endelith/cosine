@@ -18,6 +18,18 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.1")
 }
 
+publishing {
+    publications.create<MavenPublication>("maven") {
+        from(components["java"])
+        pom.licenses {
+            license {
+                name = "MIT"
+                url = "https://choosealicense.com/licenses/mit/"
+            }
+        }
+    }
+}
+
 tasks.test {
     useJUnitPlatform()
 }
