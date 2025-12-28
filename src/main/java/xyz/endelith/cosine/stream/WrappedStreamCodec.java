@@ -9,12 +9,12 @@ public record WrappedStreamCodec<T>(StreamCodec<T> inner) implements StreamCodec
     public void write(ByteBuf buffer, T value) {
         ByteBuf innerBuffer = Unpooled.buffer();
         inner.write(innerBuffer, value);
-        StreamCodec.BYTE_ARRAY.write(buffer, innerBuffer);
+        StreamCodec.LENGTH_PREFIXED_BYTES.write(buffer, innerBuffer);
     }
 
     @Override
     public T read(ByteBuf buffer) {
-        ByteBuf innerBuffer = StreamCodec.BYTE_ARRAY.read(buffer);
+        ByteBuf innerBuffer = StreamCodec.LENGTH_PREFIXED_BYTES.read(buffer);
         return inner.read(innerBuffer);
     }
 }

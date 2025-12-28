@@ -197,25 +197,45 @@ public interface StreamCodec<T> {
         }
     };
 
-    StreamCodec<ByteBuf> RAW_BYTES = new StreamCodec<>() {
+    public static final StreamCodec<ByteBuf> RAW_BYTES = new StreamCodec<>() {
+    
         @Override
-        public void write(ByteBuf buffer, ByteBuf value) {
-            buffer.writeBytes(value);
+        public void write(ByteBuf out, ByteBuf value) {
+            out.writeBytes(value, value.readerIndex(), value.readableBytes());
         }
-
+    
         @Override
-        public ByteBuf read(ByteBuf buffer) {
-            return buffer.readBytes(buffer.readableBytes());
+        public ByteBuf read(ByteBuf in) {
+            return in.readRetainedSlice(in.readableBytes());
+        }
+    };
+    
+    public static final StreamCodec<byte[]> BYTE_ARRAY = new StreamCodec<>() {
+    
+        @Override
+        public void write(ByteBuf out, byte[] value) {
+            VAR_INT.write(out, value.length);
+            out.writeBytes(value);
+        }
+    
+        @Override
+        public byte[] read(ByteBuf in) {
+            int length = VAR_INT.read(in);
+    
+            byte[] data = new byte[length];
+            in.readBytes(data);
+    
+            return data;
         }
     };
 
-    StreamCodec<ByteBuf> BYTE_ARRAY = new StreamCodec<>() {
+    StreamCodec<ByteBuf> LENGTH_PREFIXED_BYTES = new StreamCodec<>() {
         @Override
         public void write(ByteBuf buffer, ByteBuf value) {
             VAR_INT.write(buffer, value.readableBytes());
             RAW_BYTES.write(buffer, value);
         }
-
+    
         @Override
         public ByteBuf read(ByteBuf buffer) {
             int size = VAR_INT.read(buffer);
