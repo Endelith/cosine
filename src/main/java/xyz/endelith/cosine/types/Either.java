@@ -1,5 +1,7 @@
 package xyz.endelith.cosine.types;
 
+import java.util.function.Function;
+
 public sealed interface Either<L, R> permits Either.Left, Either.Right {
 
     boolean isLeft();
@@ -7,6 +9,10 @@ public sealed interface Either<L, R> permits Either.Left, Either.Right {
 
     L getLeft();
     R getRight();
+
+    default <T> T unify(Function<L, T> leftFunc, Function<R, T> rightFunc) {
+        return isLeft() ? leftFunc.apply(getLeft()) : rightFunc.apply(getRight());
+    }
 
     record Left<L, R>(L value) implements Either<L, R> {
         @Override
