@@ -1,19 +1,14 @@
 package xyz.endelith.cosine.stream;
 
+import java.time.Instant;
+import java.util.BitSet;
+import java.util.EnumSet;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
 import io.netty.buffer.ByteBuf;
 import xyz.endelith.cosine.codec.CodecUtils;
-import xyz.endelith.cosine.codec.StructCodec.Function2;
-import xyz.endelith.cosine.codec.StructCodec.Function3;
-import xyz.endelith.cosine.codec.StructCodec.Function4;
-import xyz.endelith.cosine.codec.StructCodec.Function5;
-import xyz.endelith.cosine.codec.StructCodec.Function6;
-import xyz.endelith.cosine.codec.StructCodec.Function7;
-import xyz.endelith.cosine.codec.StructCodec.Function8;
-import xyz.endelith.cosine.codec.StructCodec.Function9;
 import xyz.endelith.cosine.codec.StructCodec.Function10;
 import xyz.endelith.cosine.codec.StructCodec.Function11;
 import xyz.endelith.cosine.codec.StructCodec.Function12;
@@ -24,56 +19,30 @@ import xyz.endelith.cosine.codec.StructCodec.Function16;
 import xyz.endelith.cosine.codec.StructCodec.Function17;
 import xyz.endelith.cosine.codec.StructCodec.Function18;
 import xyz.endelith.cosine.codec.StructCodec.Function19;
+import xyz.endelith.cosine.codec.StructCodec.Function2;
 import xyz.endelith.cosine.codec.StructCodec.Function20;
+import xyz.endelith.cosine.codec.StructCodec.Function3;
+import xyz.endelith.cosine.codec.StructCodec.Function4;
+import xyz.endelith.cosine.codec.StructCodec.Function5;
+import xyz.endelith.cosine.codec.StructCodec.Function6;
+import xyz.endelith.cosine.codec.StructCodec.Function7;
+import xyz.endelith.cosine.codec.StructCodec.Function8;
+import xyz.endelith.cosine.codec.StructCodec.Function9;
+import xyz.endelith.cosine.type.Unit;
 
 public interface StreamCodec<T> {
-
+  
     void write(ByteBuf buffer, T value);
 
     T read(ByteBuf buffer);
 
-    default OptionalStreamCodec<T> optional() {
-        return new OptionalStreamCodec<>(this);
-    }
-
-    default DefaultStreamCodec<T> defaultValue(T defaultValue) {
-        return new DefaultStreamCodec<>(this, defaultValue);
-    }
-
-    default <S> TransformativeStreamCodec<T, S> transform(
-            Function<S, T> from,
-            Function<T, S> to
-    ) {
-        return new TransformativeStreamCodec<>(this, to, from);
-    }
-
-    default <V> MapStreamCodec<T, V> mapTo(StreamCodec<V> valueCodec) {
-        return new MapStreamCodec<>(this, valueCodec);
-    }
-
-    default ListStreamCodec<T> list() {
-        return new ListStreamCodec<>(this);
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    default <V, TR extends V> UnionStreamCodec<V, T, TR> union( 
-        Function<T, ? extends StreamCodec<? extends TR>> serializers,
-        Function<V, T> keyFunc
-    ) {
-        return new UnionStreamCodec(this, keyFunc, serializers);
-    }
-
-    default WrappedStreamCodec<T> wrapped() {
-        return new WrappedStreamCodec<>(this);
-    }
-
-    StreamCodec<Void> UNIT = new StreamCodec<>() {
+    StreamCodec<Unit> UNIT = new StreamCodec<>() {
         @Override
-        public void write(ByteBuf buffer, Void value) { }
+        public void write(ByteBuf buffer, Unit value) {}
 
         @Override
-        public Void read(ByteBuf buffer) {
-            return null;
+        public Unit read(ByteBuf buffer) {
+            return Unit.INSTANCE;
         }
     };
 
@@ -101,6 +70,18 @@ public interface StreamCodec<T> {
         }
     };
 
+    StreamCodec<Short> UNSIGNED_BYTE = new StreamCodec<>() {
+        @Override
+        public void write(ByteBuf buffer, Short value) {
+            buffer.writeByte(value & 0xFF);
+        }
+
+        @Override
+        public Short read(ByteBuf buffer) {
+            return (short) (buffer.readUnsignedByte());
+        }
+    };
+
     StreamCodec<Short> SHORT = new StreamCodec<>() {
         @Override
         public void write(ByteBuf buffer, Short value) {
@@ -123,7 +104,7 @@ public interface StreamCodec<T> {
         public Integer read(ByteBuf buffer) {
             return buffer.readUnsignedShort();
         }
-    };
+    }; 
 
     StreamCodec<Integer> INT = new StreamCodec<>() {
         @Override
@@ -137,15 +118,16 @@ public interface StreamCodec<T> {
         }
     };
 
-    StreamCodec<Integer> VAR_INT = new StreamCodec<>() {
+    StreamCodec<Long> UNSIGNED_INT = new StreamCodec<>() {
+    
         @Override
-        public void write(ByteBuf buffer, Integer value) {
-            CodecUtils.writeVarInt(buffer, value);
+        public void write(ByteBuf buffer, Long value) { 
+            buffer.writeInt((int)(value & 0xFFFFFFFFL));
         }
-
+    
         @Override
-        public Integer read(ByteBuf buffer) {
-            return CodecUtils.readVarInt(buffer);
+        public Long read(ByteBuf buffer) { 
+            return buffer.readUnsignedInt();
         }
     };
 
@@ -185,20 +167,31 @@ public interface StreamCodec<T> {
         }
     };
 
-    StreamCodec<String> STRING = new StreamCodec<>() {
+    StreamCodec<Integer> VAR_INT = new StreamCodec<>() {
         @Override
-        public void write(ByteBuf buffer, String value) {
-            CodecUtils.writeString(buffer, value);
+        public void write(ByteBuf buffer, Integer value) {
+            CodecUtils.writeVarInt(buffer, value);
         }
 
         @Override
-        public String read(ByteBuf buffer) {
-            return CodecUtils.readString(buffer);
+        public Integer read(ByteBuf buffer) {
+            return CodecUtils.readVarInt(buffer);
         }
     };
 
-    public static final StreamCodec<ByteBuf> RAW_BYTES = new StreamCodec<>() {
-    
+    StreamCodec<Long> VAR_LONG = new StreamCodec<Long>() {
+        @Override
+        public void write(ByteBuf buffer, Long value) {
+            CodecUtils.writeVarLong(buffer, value);
+        }
+
+        @Override
+        public Long read(ByteBuf buffer) {
+            return CodecUtils.readVarLong(buffer);
+        } 
+    };
+
+    StreamCodec<ByteBuf> RAW_BYTES = new StreamCodec<>() {
         @Override
         public void write(ByteBuf out, ByteBuf value) {
             out.writeBytes(value, value.readerIndex(), value.readableBytes());
@@ -209,37 +202,16 @@ public interface StreamCodec<T> {
             return in.readRetainedSlice(in.readableBytes());
         }
     };
-    
-    public static final StreamCodec<byte[]> BYTE_ARRAY = new StreamCodec<>() {
-    
-        @Override
-        public void write(ByteBuf out, byte[] value) {
-            VAR_INT.write(out, value.length);
-            out.writeBytes(value);
-        }
-    
-        @Override
-        public byte[] read(ByteBuf in) {
-            int length = VAR_INT.read(in);
-    
-            byte[] data = new byte[length];
-            in.readBytes(data);
-    
-            return data;
-        }
-    };
 
-    StreamCodec<ByteBuf> LENGTH_PREFIXED_BYTES = new StreamCodec<>() {
+    StreamCodec<String> STRING = new StreamCodec<>() {
         @Override
-        public void write(ByteBuf buffer, ByteBuf value) {
-            VAR_INT.write(buffer, value.readableBytes());
-            RAW_BYTES.write(buffer, value);
+        public void write(ByteBuf buffer, String value) {
+            CodecUtils.writeString(buffer, value);
         }
-    
+
         @Override
-        public ByteBuf read(ByteBuf buffer) {
-            int size = VAR_INT.read(buffer);
-            return buffer.readBytes(size);
+        public String read(ByteBuf buffer) {
+            return CodecUtils.readString(buffer);
         }
     };
 
@@ -255,6 +227,24 @@ public interface StreamCodec<T> {
             long most = LONG.read(buffer);
             long least = LONG.read(buffer);
             return new UUID(most, least);
+        }
+    };
+
+    StreamCodec<byte[]> BYTE_ARRAY = new StreamCodec<>() { 
+        @Override
+        public void write(ByteBuf out, byte[] value) {
+            VAR_INT.write(out, value.length);
+            out.writeBytes(value);
+        }
+    
+        @Override
+        public byte[] read(ByteBuf in) {
+            int length = VAR_INT.read(in);
+    
+            byte[] data = new byte[length];
+            in.readBytes(data);
+    
+            return data;
         }
     };
 
@@ -274,37 +264,104 @@ public interface StreamCodec<T> {
         }
     };
 
-    static <T> RecursiveStreamCodec<T> recursive(Function<StreamCodec<T>, StreamCodec<T>> self) {
-        return new RecursiveStreamCodec<>(self);
+    StreamCodec<int[]> VAR_INT_ARRAY = new StreamCodec<>() {
+        @Override
+        public void write(ByteBuf buffer, int[] value) {
+            VAR_INT.write(buffer, value.length); 
+            for (int i : value) CodecUtils.writeVarInt(buffer, i);
+        }
+    
+        @Override
+        public int[] read(ByteBuf buffer) {
+            int size = VAR_INT.read(buffer);
+            int[] arr = new int[size];
+            for (int i = 0; i < size; i++) arr[i] = VAR_INT.read(buffer);
+            return arr;
+        }
+    };
+
+    StreamCodec<long[]> VAR_LONG_ARRAY = new StreamCodec<>() {
+        @Override
+        public void write(ByteBuf buffer, long[] value) {
+            VAR_INT.write(buffer, value.length);
+            for (long l : value) CodecUtils.writeVarLong(buffer, l);
+        }
+    
+        @Override
+        public long[] read(ByteBuf buffer) {
+            int size = VAR_INT.read(buffer);
+            long[] arr = new long[size];
+            for (int i = 0; i < size; i++) arr[i] = VAR_LONG.read(buffer);
+            return arr;
+        }
+    };
+
+    StreamCodec<BitSet> BITSET = LONG_ARRAY.transform(BitSet::valueOf, BitSet::toLongArray);
+    StreamCodec<Instant> INSTANT_MS = LONG.transform(Instant::ofEpochMilli, Instant::toEpochMilli); 
+
+    static <E extends Enum<E>> StreamCodec<E> enumOf(Class<E> enumClass) {
+        final E[] values = enumClass.getEnumConstants();
+        return VAR_INT.transform(integer -> values[integer], Enum::ordinal);
     }
 
-    StreamCodec<UUID> UUID_STRING =
-            STRING.transform(
-                    java.util.UUID::toString,
-                    java.util.UUID::fromString
-            );
-
-    static <E extends Enum<E>> StreamCodec<E> enumOf(Class<E> clazz) {
-        return new EnumStreamCodec<>(clazz);
+    static <E extends Enum<E>> StreamCodec<EnumSet<E>> enumSet(Class<E> enumClass) {
+        return new EnumSetStreamCodec<>(enumClass, enumClass.getEnumConstants());
     }
 
-    static <E extends Enum<E>> StreamCodec<E> enumString(Class<E> clazz) {
-        return STRING.transform(
-            e -> ((Enum<?>) e).name().toLowerCase(),
-            s -> Enum.valueOf(clazz, s.toUpperCase())
-        );
-    }
-
-    static FixedBitSetStreamCodec fixedBitSet(int length) {
+    static StreamCodec<BitSet> fixedBitSet(int length) {
         return new FixedBitSetStreamCodec(length);
-    }
-
-    static <T> LengthPrefixedStreamCodec<T> lengthPrefixed(StreamCodec<T> codec) {
-        return new LengthPrefixedStreamCodec<>(codec);
-    }
+    } 
 
     static <L, R> EitherStreamCodec<L, R> either(StreamCodec<L> leftCodec, StreamCodec<R> rightCodec) {
         return new EitherStreamCodec<>(leftCodec, rightCodec);
+    }
+
+    default <S> StreamCodec<S> transform(Function<T, S> to, Function<S, T> from) {
+        return new TransforStreamCodec<>(this, to, from);
+    }
+
+    default <V> StreamCodec<Map<T, V>> mapValue(StreamCodec<V> valueType, int maxSize) {
+        return new MapStreamCodec<>(this, valueType, maxSize);
+    }
+
+    default <V> StreamCodec<Map<T, V>> mapValue(StreamCodec<V> valueType) {
+        return mapValue(valueType, Integer.MAX_VALUE);
+    }
+ 
+    default ListStreamCodec<T> list(int maxSize) {
+        return new ListStreamCodec<>(this, maxSize);
+    }
+
+    default ListStreamCodec<T> list() {
+        return list(Integer.MAX_VALUE);
+    }
+
+    default SetStreamCodec<T> set(int maxSize) {
+        return new SetStreamCodec<>(this, maxSize);
+    }
+
+    default SetStreamCodec<T> set() {
+        return set(Integer.MAX_VALUE);
+    }
+
+    default OptionalStreamCodec<T> optional() {
+        return new OptionalStreamCodec<>(this);
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    default <V, TR extends V> UnionStreamCodec<V, T, TR> union( 
+        Function<T, ? extends StreamCodec<? extends TR>> serializers,
+        Function<V, T> keyFunc
+    ) {
+        return new UnionStreamCodec(this, keyFunc, serializers);
+    }
+
+    default LengthPrefixedStreamCodec<T> lengthPrefixed(int maxLength) {
+        return new LengthPrefixedStreamCodec<>(this, maxLength);
+    }
+
+    default LengthPrefixedStreamCodec<T> lengthPrefixed() {
+        return lengthPrefixed(Integer.MAX_VALUE);
     }
 
     public static <R> StreamCodec<R> of(Supplier<R> supplier) {

@@ -1,28 +1,35 @@
 package xyz.endelith.cosine.stream;
 
-import io.netty.buffer.ByteBuf;
-import xyz.endelith.cosine.codec.Codec;
-import xyz.endelith.cosine.codec.CodecUtils;
-
 import java.util.BitSet;
+import io.netty.buffer.ByteBuf;
 
 public record FixedBitSetStreamCodec(int length) implements StreamCodec<BitSet> {
 
     @Override
     public void write(ByteBuf buffer, BitSet value) {
-        int setLength = value.length();
-        if (setLength > length) {
-            throw new Codec.EncodingException("BitSet is larger than expected size (" + setLength + " > " + length + ")");
+        if (value.length() > this.length) {
+            throw new IllegalStateException(String.format(
+                "BitSet is larger than expected size (%s > %s)",
+                value.length(), this.length
+            ));
+        } else {
+            byte[] array = value.toByteArray();
+            BYTE_ARRAY.write(buffer, array); 
         }
-        byte[] bytes = value.toByteArray();
-        StreamCodec.RAW_BYTES.write(buffer, CodecUtils.toByteBuf(bytes));
     }
 
     @Override
     public BitSet read(ByteBuf buffer) {
-        int byteCount = (length + 7) / 8;
-        ByteBuf byteBuf = buffer.readBytes(byteCount);
-        byte[] array = CodecUtils.toByteArraySafe(byteBuf);
-        return BitSet.valueOf(array);
+        byte[] array = BYTE_ARRAY.read(buffer);
+
+        BitSet bitSet = BitSet.valueOf(array);
+        if (bitSet.length() > this.length) {
+            throw new IllegalStateException(String.format(
+                "BitSet is larger than expected size (%s > %s)",
+                bitSet.length(), this.length
+            ));
+        }
+
+        return bitSet;
     }
 }

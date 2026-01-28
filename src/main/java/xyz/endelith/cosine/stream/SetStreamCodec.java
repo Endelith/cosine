@@ -1,43 +1,44 @@
 package xyz.endelith.cosine.stream;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import io.netty.buffer.ByteBuf;
 
-public record ListStreamCodec<T>(
+public record SetStreamCodec<T>(
     StreamCodec<T> parent, 
     int maxSize
-) implements StreamCodec<List<T>> {
+) implements StreamCodec<Set<T>> {
 
-    public ListStreamCodec {
+    public SetStreamCodec {
         Objects.requireNonNull(parent, "parent");
     }
 
     @Override
-    public void write(ByteBuf buffer, List<T> values) {
+    public void write(ByteBuf buffer, Set<T> values) {
         if (values == null) {
-            BYTE.write(buffer, (byte) 0); 
+            BYTE.write(buffer, (byte) 0);
             return;
         }
+        
         VAR_INT.write(buffer, values.size());
         for (T value : values) this.parent.write(buffer, value);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<T> read(ByteBuf buffer) {
+    public Set<T> read(ByteBuf buffer) {
         int size = StreamCodec.VAR_INT.read(buffer);
         
         if (size > this.maxSize) {
             throw new IllegalStateException(String.format(
-                "List size %s exceeds max size %s",
+                "Set size %s exceeds max size %s",
                 size,
                 this.maxSize
             ));
         }
 
         T[] values = (T[]) new Object[size];
-        for (int i = 0; i < size; i++) values[i] = this.parent.read(buffer);
-        return List.of(values);
+        for (int i = 0; i < size; i++) values[i] = this.parent.read(buffer);        
+        return Set.of(values);
     }
 }

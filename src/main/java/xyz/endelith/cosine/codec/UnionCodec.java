@@ -1,43 +1,47 @@
 package xyz.endelith.cosine.codec;
 
+import java.util.Objects;
 import java.util.function.Function;
-
 import xyz.endelith.cosine.transcoder.Transcoder;
 
 public record UnionCodec<T, R>(
-    String keyField, 
-    Codec<T> keyCodec, 
-    Function<T, 
-    StructCodec<? extends R>> serializers, 
+    String keyField,
+    Codec<T> keyCodec,
+    Function<T, StructCodec<? extends R>> serializers,
     Function<R, T> keyFunc
 ) implements StructCodec<R> {
 
-    @Override
-    public <D> R decodeFromMap(
-            Transcoder<D> transcoder,
-            Transcoder.VirtualMap<D> map
-    ) {
-        D rawKey = map.getValue(keyField);
-        T key = keyCodec.decode(transcoder, rawKey);
+    public UnionCodec {
+        Objects.requireNonNull(keyField, "key field");
+        Objects.requireNonNull(keyCodec, "key codec");
+        Objects.requireNonNull(serializers, "serializers");
+        Objects.requireNonNull(keyFunc, "key func");
+    }
 
-        StructCodec<? extends R> serializer = serializers.apply(key);
+    @Override
+    public <D> R decodeFromMap(Transcoder<D> transcoder, Transcoder.VirtualMap<D> map) {
+        D rawKey = map.getValue(this.keyField);
+        T key = this.keyCodec.decode(transcoder, rawKey);
+
+        StructCodec<? extends R> serializer = this.serializers.apply(key);
+
         return serializer.decodeFromMap(transcoder, map);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
     public <D> D encodeToMap(
-            Transcoder<D> transcoder,
-            R value,
-            Transcoder.VirtualMapBuilder<D> map
+        Transcoder<D> transcoder,
+        R value,
+        Transcoder.VirtualMapBuilder<D> map
     ) {
-        T key = keyFunc.apply(value);
-        StructCodec<R> serializer =
-                (StructCodec<R>) serializers.apply(key);
+        T key = this.keyFunc.apply(value);
+
+        StructCodec<R> serializer = (StructCodec<R>) this.serializers.apply(key);
 
         map.put(
-                keyField,
-                keyCodec.encode(transcoder, key)
+            this.keyField,
+            this.keyCodec.encode(transcoder, key)
         );
 
         return serializer.encodeToMap(transcoder, value, map);

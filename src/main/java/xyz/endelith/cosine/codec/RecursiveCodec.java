@@ -6,36 +6,25 @@ import java.util.function.Function;
 import xyz.endelith.cosine.transcoder.Transcoder;
 
 public final class RecursiveCodec<T> implements Codec<T> {
-
-    private final Function<Codec<T>, Codec<T>> self;
-    private Codec<T> delegate;
+    
+    private final Codec<T> delegate;
 
     public RecursiveCodec(Function<Codec<T>, Codec<T>> self) {
-        this.self = Objects.requireNonNull(self);
-    }
-
-    public Codec<T> delegate() {
-        return delegate;
-    }
-
-    public Function<Codec<T>, Codec<T>> self() {
-        return self;
-    }
-
-    private Codec<T> resolve() {
-        if (delegate == null) {
-            delegate = Objects.requireNonNull(self.apply(this));
-        }
-        return delegate;
-    }
-
-    @Override
-    public <D> D encode(Transcoder<D> transcoder, T value) {
-        return resolve().encode(transcoder, value);
+        Objects.requireNonNull(self, "self");
+        this.delegate = Objects.requireNonNull(self.apply(this), "delegate");
     }
 
     @Override
     public <D> T decode(Transcoder<D> transcoder, D value) {
-        return resolve().decode(transcoder, value);
+        return this.delegate.decode(transcoder, value);
+    }
+
+    @Override
+    public <D> D encode(Transcoder<D> transcoder, T value) {
+        return this.delegate.encode(transcoder, value);
+    }
+
+    public Codec<T> delegate() {
+        return this.delegate;
     }
 }

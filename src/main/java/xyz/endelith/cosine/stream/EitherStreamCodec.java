@@ -1,30 +1,39 @@
 package xyz.endelith.cosine.stream;
 
-import io.netty.buffer.ByteBuf;
-import xyz.endelith.cosine.types.Either;
+import java.util.Objects;
 
-public record EitherStreamCodec<L, R>(StreamCodec<L> leftCodec, StreamCodec<R> rightCodec) implements StreamCodec<Either<L, R>> {
+import io.netty.buffer.ByteBuf;
+import xyz.endelith.cosine.type.Either;
+
+public record EitherStreamCodec<L, R>(
+    StreamCodec<L> left,
+    StreamCodec<R> right
+) implements StreamCodec<Either<L, R>> {
+
+    public EitherStreamCodec {
+        Objects.requireNonNull(left, "left");
+        Objects.requireNonNull(right, "right");
+    }
 
     @Override
     public void write(ByteBuf buffer, Either<L, R> value) {
-        if (value.isLeft()) {
-            StreamCodec.BOOLEAN.write(buffer, true);
-            leftCodec.write(buffer, value.getLeft());
-        } else {
-            StreamCodec.BOOLEAN.write(buffer, false);
-            rightCodec.write(buffer, value.getRight());
+        switch (value) {
+            case Either.Left(L leftValue) -> {
+                BOOLEAN.write(buffer, true);
+                left.write(buffer, leftValue);
+            }
+            case Either.Right(R rightValue) -> {
+                BOOLEAN.write(buffer, false);
+                right.write(buffer, rightValue);
+            }
         }
     }
 
     @Override
     public Either<L, R> read(ByteBuf buffer) {
-        boolean isLeft = StreamCodec.BOOLEAN.read(buffer);
-        if (isLeft) {
-            L leftValue = leftCodec.read(buffer);
-            return Either.left(leftValue);
-        } else {
-            R rightValue = rightCodec.read(buffer);
-            return Either.right(rightValue);
+        if (BOOLEAN.read(buffer)) {
+            return Either.left(left.read(buffer));
         }
+        return Either.right(right.read(buffer));
     }
 }

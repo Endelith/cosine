@@ -9,30 +9,39 @@ public interface Transcoder<T> {
     T encodeNull();
 
     T encodeBoolean(boolean value);
+
     boolean decodeBoolean(T value);
 
     T encodeByte(byte value);
+    
     byte decodeByte(T value);
 
     T encodeShort(short value);
+    
     short decodeShort(T value);
 
     T encodeInt(int value);
+    
     int decodeInt(T value);
 
     T encodeLong(long value);
+    
     long decodeLong(T value);
 
     T encodeFloat(float value);
+    
     float decodeFloat(T value);
 
     T encodeDouble(double value);
+    
     double decodeDouble(T value);
 
     T encodeString(String value);
+    
     String decodeString(T value);
 
     ListBuilder<T> encodeList(int size);
+    
     List<T> decodeList(T value);
 
     default T emptyList() {
@@ -40,6 +49,7 @@ public interface Transcoder<T> {
     }
 
     VirtualMapBuilder<T> encodeMap();
+    
     VirtualMap<T> decodeMap(T value);
 
     default T emptyMap() {

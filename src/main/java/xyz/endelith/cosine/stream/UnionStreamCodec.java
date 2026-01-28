@@ -1,6 +1,8 @@
 package xyz.endelith.cosine.stream;
 
+import java.util.Objects;
 import java.util.function.Function;
+
 import io.netty.buffer.ByteBuf;
 
 public record UnionStreamCodec<T, K, TR extends T>(
@@ -9,19 +11,25 @@ public record UnionStreamCodec<T, K, TR extends T>(
         Function<K, StreamCodec<? extends TR>> serializers
 ) implements StreamCodec<T> {
 
-    @SuppressWarnings("unchecked")
+    public UnionStreamCodec {
+        Objects.requireNonNull(keyCodec, "key codec");
+        Objects.requireNonNull(keyFunc, "key func");
+        Objects.requireNonNull(serializers, "serializers");
+    }
+ 
     @Override
+    @SuppressWarnings("unchecked")
     public void write(ByteBuf buffer, T value) {
-        K key = keyFunc.apply(value);
-        keyCodec.write(buffer, key);
-        StreamCodec<TR> serializer = (StreamCodec<TR>) serializers.apply(key);
+        K key = this.keyFunc.apply(value);
+        this.keyCodec.write(buffer, key);
+        StreamCodec<TR> serializer = (StreamCodec<TR>) this.serializers.apply(key);
         serializer.write(buffer, (TR) value);
     }
 
     @Override
     public T read(ByteBuf buffer) {
-        K key = keyCodec.read(buffer);
-        StreamCodec<? extends TR> serializer = serializers.apply(key);
+        K key = this.keyCodec.read(buffer);
+        StreamCodec<? extends TR> serializer = this.serializers.apply(key);
         return serializer.read(buffer);
-    } 
+    }
 }

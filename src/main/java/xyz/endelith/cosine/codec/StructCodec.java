@@ -1,7 +1,6 @@
 package xyz.endelith.cosine.codec;
 
 import java.util.function.Function;
-
 import xyz.endelith.cosine.transcoder.Transcoder;
 
 public interface StructCodec<R> extends Codec<R> {
@@ -1561,13 +1560,13 @@ public interface StructCodec<R> extends Codec<R> {
             } else if (codec instanceof DefaultCodec<?> dc) {
                 encodeCodec = (Codec<T>) dc.inner();
             } else if (codec instanceof RecursiveCodec<?> rc) {
-                encodeCodec = (Codec<T>) rc.self();
+                encodeCodec = (Codec<T>) rc.delegate();
             } else {
                 encodeCodec = codec;
             }
 
             if (!(encodeCodec instanceof StructCodec<?> sc)) {
-                throw new Codec.EncodingException("Provided codec for inline " + key + " is not StructCodec");
+                throw new IllegalStateException("Provided codec for inline " + key + " is not StructCodec");
             }
 
             return ((StructCodec<T>) sc).encodeToMap(transcoder, value, map);
@@ -1594,13 +1593,13 @@ public interface StructCodec<R> extends Codec<R> {
             } else if (codec instanceof DefaultCodec<?> dc) {
                 decodeCodec = (Codec<T>) dc.inner();
             } else if (codec instanceof RecursiveCodec<?> rc) {
-                decodeCodec = (Codec<T>) rc.self();
+                decodeCodec = (Codec<T>) rc.delegate();
             } else {
                 decodeCodec = codec;
             }
 
             if (!(decodeCodec instanceof StructCodec<?> sc)) {
-                throw new Codec.EncodingException("Provided codec for inline " + key + " is not StructCodec");
+                throw new IllegalStateException("Provided codec for inline " + key + " is not StructCodec");
             }
 
             try {

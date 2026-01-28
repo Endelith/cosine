@@ -1,31 +1,43 @@
 package xyz.endelith.cosine.codec;
 
+import java.util.Objects;
+import org.jspecify.annotations.Nullable;
 import xyz.endelith.cosine.transcoder.Transcoder;
-import xyz.endelith.cosine.types.Either;
+import xyz.endelith.cosine.type.Either;
 
-public record EitherCodec<L, R>(Codec<L> leftCodec, Codec<R> rightCodec) implements Codec<Either<L, R>> {
+public record EitherCodec<L, R>(
+    Codec<L> leftCodec,
+    Codec<R> rightCodec
+) implements Codec<Either<L, R>> {
+
+    public EitherCodec {
+        Objects.requireNonNull(leftCodec, "left codec");
+        Objects.requireNonNull(rightCodec, "right codec");
+    }
 
     @Override
-    public <D> D encode(Transcoder<D> transcoder, Either<L, R> value) {
-        if (value instanceof Either.Left<L, R> left) {
-            return leftCodec.encode(transcoder, left.value());
+    @SuppressWarnings("unchecked")
+    public <D> Either<L, R> decode(Transcoder<D> transcoder, D value) {
+        if (value instanceof Either.Left<?, ?> left) {
+            L decoded = this.leftCodec.decode(transcoder, (D) left.value());
+            return Either.left(decoded);
         }
-        if (value instanceof Either.Right<L, R> right) {
-            return rightCodec.encode(transcoder, right.value());
+
+        if (value instanceof Either.Right<?, ?> right) {
+            R decoded = this.rightCodec.decode(transcoder, (D) right.value());
+            return Either.right(decoded);
         }
 
         throw new IllegalStateException("Unknown Either type: " + value);
     }
 
     @Override
-    public <D> Either<L, R> decode(Transcoder<D> transcoder, D value) {
-        try {
-            L left = leftCodec.decode(transcoder, value);
-            return Either.left(left);
-        } catch (Exception ignored) {
-            return Either.right(
-                    rightCodec.decode(transcoder, value)
-            );
-        }
+    public <D> D encode(Transcoder<D> transcoder, @Nullable Either<L, R> value) {
+        if (value == null) return null;
+
+        return value.unify(
+            left -> this.leftCodec.encode(transcoder, left),
+            right -> this.rightCodec.encode(transcoder, right)
+        );
     }
 }
