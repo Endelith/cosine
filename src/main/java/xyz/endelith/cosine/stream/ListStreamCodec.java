@@ -24,6 +24,7 @@ public record ListStreamCodec<T>(
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<T> read(ByteBuf buffer) {
         int size = StreamCodec.VAR_INT.read(buffer);
         

@@ -25,6 +25,7 @@ public record SetStreamCodec<T>(
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Set<T> read(ByteBuf buffer) {
         int size = StreamCodec.VAR_INT.read(buffer);
         

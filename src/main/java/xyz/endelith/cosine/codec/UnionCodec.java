@@ -29,6 +29,7 @@ public record UnionCodec<T, R>(
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <D> D encodeToMap(
         Transcoder<D> transcoder,
         R value,

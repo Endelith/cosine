@@ -16,6 +16,7 @@ public record EitherCodec<L, R>(
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <D> Either<L, R> decode(Transcoder<D> transcoder, D value) {
         if (value instanceof Either.Left<?, ?> left) {
             L decoded = this.leftCodec.decode(transcoder, (D) left.value());

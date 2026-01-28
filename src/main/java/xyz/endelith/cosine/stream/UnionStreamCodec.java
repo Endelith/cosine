@@ -18,6 +18,7 @@ public record UnionStreamCodec<T, K, TR extends T>(
     }
  
     @Override
+    @SuppressWarnings("unchecked")
     public void write(ByteBuf buffer, T value) {
         K key = this.keyFunc.apply(value);
         this.keyCodec.write(buffer, key);

@@ -348,7 +348,7 @@ public interface StreamCodec<T> {
         return new OptionalStreamCodec<>(this);
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     default <V, TR extends V> UnionStreamCodec<V, T, TR> union( 
         Function<T, ? extends StreamCodec<? extends TR>> serializers,
         Function<V, T> keyFunc
