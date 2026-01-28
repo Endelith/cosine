@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
 import xyz.endelith.cosine.transcoder.Transcoder;
+import xyz.endelith.cosine.type.Either;
 import xyz.endelith.cosine.type.Unit;
 
 public interface Codec<T> extends Decoder<T>, Encoder<T> {
@@ -83,6 +83,10 @@ public interface Codec<T> extends Decoder<T>, Encoder<T> {
 
     static <T> Codec<T> forwardRef(Supplier<Codec<T>> supplier) {
         return new ForwardRefCodec<>(supplier);
+    }
+
+    static <L, R> Codec<Either<L, R>> either(Codec<L> leftCodec, Codec<R> rightCodec) {
+        return new EitherCodec<>(leftCodec, rightCodec);
     }
 
     default <S> Codec<S> transform(Function<T, S> to, Function<S, T> from) {

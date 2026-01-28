@@ -1,5 +1,6 @@
 package xyz.endelith.cosine.codec;
 
+import java.util.Objects;
 import java.util.function.Function;
 import xyz.endelith.cosine.transcoder.Transcoder;
 
@@ -9,6 +10,13 @@ public record UnionCodec<T, R>(
     Function<T, StructCodec<? extends R>> serializers,
     Function<R, T> keyFunc
 ) implements StructCodec<R> {
+
+    public UnionCodec {
+        Objects.requireNonNull(keyField, "key field");
+        Objects.requireNonNull(keyCodec, "key codec");
+        Objects.requireNonNull(serializers, "serializers");
+        Objects.requireNonNull(keyFunc, "key func");
+    }
 
     @Override
     public <D> R decodeFromMap(Transcoder<D> transcoder, Transcoder.VirtualMap<D> map) {
@@ -20,7 +28,6 @@ public record UnionCodec<T, R>(
         return serializer.decodeFromMap(transcoder, map);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <D> D encodeToMap(
         Transcoder<D> transcoder,

@@ -13,41 +13,32 @@ public final class CodecUtils {
     public static final int SEGMENT_BITS = 0x7F;
     public static final int CONTINUE_BIT = 0x80;
     public static final int MAXIMUM_VAR_INT_SIZE = 5;
+    public static final int MAXIMUM_VAR_LONG_SIZE = 10;
 
     public static int[] uuidToIntArray(UUID uuid) {
         long most = uuid.getMostSignificantBits();
         long least = uuid.getLeastSignificantBits();
 
         return new int[] {
-                (int) (most >>> 32),
-                (int) most,
-                (int) (least >>> 32),
-                (int) least
+            (int) (most >>> 32),
+            (int) most,
+            (int) (least >>> 32),
+            (int) least
         };
     }
 
     public static UUID intArrayToUuid(int[] array) {
-        long most =
-                ((long) array[0] << 32)
-                        | ((long) array[1] & 0xFFFFFFFFL);
-
-        long least =
-                ((long) array[2] << 32)
-                        | ((long) array[3] & 0xFFFFFFFFL);
-
+        long most = ((long) array[0] << 32) | ((long) array[1] & 0xFFFFFFFFL);
+        long least = ((long) array[2] << 32) | ((long) array[3] & 0xFFFFFFFFL);
         return new UUID(most, least);
     }
 
     public static int readVarInt(ByteBuf buffer) {
         int readable = buffer.readableBytes();
-        if (readable == 0) {
-            throw new IllegalStateException("Invalid VarInt");
-        }
+        if (readable == 0) throw new IllegalStateException("Invalid VarInt");
 
         int current = buffer.readByte();
-        if ((current & CONTINUE_BIT) != CONTINUE_BIT) {
-            return current;
-        }
+        if ((current & CONTINUE_BIT) != CONTINUE_BIT) return current;
 
         int maxRead = Math.min(MAXIMUM_VAR_INT_SIZE, readable);
         int varInt = current & SEGMENT_BITS;
@@ -55,31 +46,24 @@ public final class CodecUtils {
         for (int i = 1; i < maxRead; i++) {
             current = buffer.readByte();
             varInt |= (current & SEGMENT_BITS) << (i * 7);
-
-            if ((current & CONTINUE_BIT) != CONTINUE_BIT) {
-                return varInt;
-            }
+            if ((current & CONTINUE_BIT) != CONTINUE_BIT) return varInt;
         }
 
         throw new IllegalStateException("Invalid VarInt");
     }
 
     public static void writeVarInt(ByteBuf buffer, int value) {
-
         // 1 byte
         if ((value & (-1 << 7)) == 0) {
             buffer.writeByte(value);
             return;
         }
-
         // 2 byte
         if ((value & (-1 << 14)) == 0) {
-            int w = ((value & SEGMENT_BITS) | CONTINUE_BIT) << 8
-                    | (value >>> 7);
+            int w = ((value & SEGMENT_BITS) | CONTINUE_BIT) << 8 | (value >>> 7);
             buffer.writeShort(w);
             return;
         }
-
         // 3 byte
         if ((value & (-1 << 21)) == 0) {
             buffer.writeByte((value & SEGMENT_BITS) | CONTINUE_BIT);
@@ -87,7 +71,6 @@ public final class CodecUtils {
             buffer.writeByte(value >>> 14);
             return;
         }
-
         // 4 byte
         if ((value & (-1 << 28)) == 0) {
             buffer.writeByte((value & SEGMENT_BITS) | CONTINUE_BIT);
@@ -96,7 +79,6 @@ public final class CodecUtils {
             buffer.writeByte(value >>> 21);
             return;
         }
-
         // 5 byte
         buffer.writeByte((value & SEGMENT_BITS) | CONTINUE_BIT);
         buffer.writeByte(((value >>> 7) & SEGMENT_BITS) | CONTINUE_BIT);
@@ -105,35 +87,53 @@ public final class CodecUtils {
         buffer.writeByte(value >>> 28);
     }
 
+    public static long readVarLong(ByteBuf buffer) {
+        long value = 0L;
+        int position = 0;
+
+        while (true) {
+            if (position >= MAXIMUM_VAR_LONG_SIZE * 7) {
+                throw new IllegalStateException("VarLong is too big");
+            }
+
+            byte current = buffer.readByte();
+            value |= (long) (current & SEGMENT_BITS) << position;
+
+            if ((current & CONTINUE_BIT) != CONTINUE_BIT) break;
+            position += 7;
+        }
+
+        return value;
+    }
+
+    public static void writeVarLong(ByteBuf buffer, long value) {
+        while (true) {
+            if ((value & ~0x7FL) == 0) {
+                buffer.writeByte((int) value);
+                return;
+            } else {
+                buffer.writeByte((int) (value & SEGMENT_BITS) | CONTINUE_BIT);
+                value >>>= 7;
+            }
+        }
+    }
+
     public static String readString(ByteBuf buffer, int maxChars) {
         int maxSize = maxChars * 3;
         int size = readVarInt(buffer);
 
-        if (size > maxSize) {
-            throw new DecoderException(
-                    "The received string was longer than the allowed "
-                            + maxSize + " (" + size + " > " + maxSize + ")"
-            );
-        }
-
-        if (size < 0) {
+        if (size > maxSize)
+            throw new DecoderException("The received string was longer than the allowed "
+                    + maxSize + " (" + size + " > " + maxSize + ")");
+        if (size < 0)
             throw new DecoderException("The received string's length was smaller than 0");
-        }
 
-        String str = buffer.toString(
-                buffer.readerIndex(),
-                size,
-                StandardCharsets.UTF_8
-        );
-
+        String str = buffer.toString(buffer.readerIndex(), size, StandardCharsets.UTF_8);
         buffer.readerIndex(buffer.readerIndex() + size);
 
-        if (str.length() > maxChars) {
-            throw new DecoderException(
-                    "The received string was longer than the allowed ("
-                            + str.length() + " > " + maxChars + ")"
-            );
-        }
+        if (str.length() > maxChars)
+            throw new DecoderException("The received string was longer than the allowed ("
+                    + str.length() + " > " + maxChars + ")");
 
         return str;
     }
@@ -150,9 +150,7 @@ public final class CodecUtils {
     }
 
     public static byte[] toByteArraySafe(ByteBuf buf) {
-        if (buf.hasArray()) {
-            return buf.array();
-        }
+        if (buf.hasArray()) return buf.array();
 
         byte[] bytes = new byte[buf.readableBytes()];
         buf.getBytes(buf.readerIndex(), bytes);
