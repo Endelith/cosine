@@ -12,10 +12,11 @@ public record OptionalCodec<T>(Codec<T> inner) implements Codec<T> {
 
     @Override
     public <D> T decode(Transcoder<D> transcoder, D value) {
-        if (value == null) {
+        try {
+            return this.inner.decode(transcoder, value);
+        } catch (Exception ignored) {
             return null;
         }
-        return this.inner.decode(transcoder, value);
     }
 
     @Override
