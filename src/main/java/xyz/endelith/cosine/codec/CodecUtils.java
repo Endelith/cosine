@@ -2,7 +2,6 @@ package xyz.endelith.cosine.codec;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
@@ -42,7 +41,7 @@ public final class CodecUtils {
     public static int readVarInt(ByteBuf buffer) {
         int readable = buffer.readableBytes();
         if (readable == 0) {
-            throw new Codec.DecodingException("Invalid VarInt");
+            throw new IllegalStateException("Invalid VarInt");
         }
 
         int current = buffer.readByte();
@@ -62,7 +61,7 @@ public final class CodecUtils {
             }
         }
 
-        throw new Codec.DecodingException("Invalid VarInt");
+        throw new IllegalStateException("Invalid VarInt");
     }
 
     public static void writeVarInt(ByteBuf buffer, int value) {

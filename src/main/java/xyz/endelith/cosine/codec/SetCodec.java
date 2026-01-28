@@ -1,48 +1,49 @@
 package xyz.endelith.cosine.codec;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import org.jspecify.annotations.Nullable;
 import xyz.endelith.cosine.transcoder.Transcoder;
 
-public record ListCodec<T>(Codec<T> inner, int maxSize) implements Codec<List<T>> {
+public record SetCodec<T>(Codec<T> inner, int maxSize) implements Codec<Set<T>> {
 
-    public ListCodec {
+    public SetCodec {
         Objects.requireNonNull(inner, "inner");
     }
 
     @Override
-    public <D> List<T> decode(Transcoder<D> transcoder, D value) {
-        List<D> decoded = transcoder.decodeList(value);
+    public <D> Set<T> decode(Transcoder<D> transcoder, D value) {
+        List<D> list = transcoder.decodeList(value);
 
-        if (decoded.size() > maxSize) {
+        if (list.size() > this.maxSize) {
             throw new IllegalStateException(String.format(
-                "List size %s exceeds max size %s",
-                decoded.size(),
-                maxSize
+                "Set size %s exceeds max size %s",
+                list.size(),
+                this.maxSize
             ));
         }
 
-        List<T> result = new ArrayList<>(decoded.size());
-        for (D element : decoded) {
+        Set<T> result = new HashSet<>(list.size());
+        for (D element : list) {
             result.add(this.inner.decode(transcoder, element));
         }
 
-        return List.copyOf(result);
+        return result;
     }
 
     @Override
-    public <D> D encode(Transcoder<D> transcoder, @Nullable List<T> value) {
+    public <D> D encode(Transcoder<D> transcoder, @Nullable Set<T> value) {
         if (value == null) {
-            throw new IllegalStateException("Cannot encode null List");
+            throw new IllegalStateException("Cannot encode null Set");
         }
 
-        if (value.size() > maxSize) {
+        if (value.size() > this.maxSize) {
             throw new IllegalStateException(String.format(
-                "List size %s exceeds max size %s",
+                "Set size %s exceeds max size %s",
                 value.size(),
-                maxSize
+                this.maxSize
             ));
         }
 

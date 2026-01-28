@@ -2,7 +2,6 @@ package xyz.endelith.cosine.codec;
 
 import java.util.Objects;
 import java.util.function.Supplier;
-
 import xyz.endelith.cosine.transcoder.Transcoder;
 
 public record ForwardRefCodec<T>(Codec<T> delegate) implements Codec<T> {

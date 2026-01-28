@@ -1,42 +1,92 @@
 package xyz.endelith.cosine.codec;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import io.netty.buffer.ByteBuf;
 import xyz.endelith.cosine.transcoder.Transcoder;
-import xyz.endelith.cosine.types.Either;
+import xyz.endelith.cosine.type.Unit;
 
-public interface Codec<T> {
+public interface Codec<T> extends Decoder<T>, Encoder<T> {
+    
+    Codec<Unit> UNIT = new PrimitiveCodec<Unit>(
+        new Decoder<>() {
+            @Override
+            public <D> Unit decode(Transcoder<D> transcoder, D value) {
+                return Unit.INSTANCE;
+            }
+        },
+        new Encoder<>() {
+            @Override
+            public <D> D encode(Transcoder<D> transcoder, Unit value) {
+                return transcoder.encodeNull();
+            }
+        }
+    );
 
-    <D> D encode(Transcoder<D> transcoder, T value);
+    Codec<Boolean> BOOLEAN =
+        new PrimitiveCodec<>(Transcoder::decodeBoolean, Transcoder::encodeBoolean);
 
-    <D> T decode(Transcoder<D> transcoder, D value);
+    Codec<Byte> BYTE =
+        new PrimitiveCodec<>(Transcoder::decodeByte, Transcoder::encodeByte);
 
-    default <S> TransformativeCodec<T, S> transform(
-            Function<T, S> from,
-            Function<S, T> to
-    ) {
-        return new TransformativeCodec<>(this, from, to);
+    Codec<Short> SHORT =
+        new PrimitiveCodec<>(Transcoder::decodeShort, Transcoder::encodeShort);
+
+    Codec<Integer> INT =
+        new PrimitiveCodec<>(Transcoder::decodeInt, Transcoder::encodeInt);
+
+    Codec<Long> LONG =
+        new PrimitiveCodec<>(Transcoder::decodeLong, Transcoder::encodeLong);
+
+    Codec<Float> FLOAT =
+        new PrimitiveCodec<>(Transcoder::decodeFloat, Transcoder::encodeFloat);
+
+    Codec<Double> DOUBLE =
+        new PrimitiveCodec<>(Transcoder::decodeDouble, Transcoder::encodeDouble);
+
+    Codec<String> STRING =
+        new PrimitiveCodec<>(Transcoder::decodeString, Transcoder::encodeString);
+
+    Codec<byte[]> BYTE_ARRAY =
+        new PrimitiveCodec<>(Transcoder::decodeByteArray, Transcoder::encodeByteArray);
+
+    Codec<int[]> INT_ARRAY =
+        new PrimitiveCodec<>(Transcoder::decodeIntArray, Transcoder::encodeIntArray);
+
+    Codec<long[]> LONG_ARRAY =
+        new PrimitiveCodec<>(Transcoder::decodeLongArray, Transcoder::encodeLongArray);
+ 
+    Codec<UUID> UUID = 
+        Codec.INT_ARRAY.transform(CodecUtils::intArrayToUuid, CodecUtils::uuidToIntArray);
+
+    Codec<UUID> UUID_STRING = 
+        STRING.transform(java.util.UUID::fromString, java.util.UUID::toString);
+
+    Codec<UUID> UUID_COERCED = UUID.orElse(UUID_STRING);
+
+    static <E extends Enum<E>> Codec<E> enumOf(Class<E> enumClass) {
+        Objects.requireNonNull(enumClass, "enum class");
+        return STRING.transform(
+                value -> Enum.valueOf(enumClass, value.toUpperCase(Locale.ROOT)),
+                value -> value.name().toLowerCase(Locale.ROOT));
     }
 
-    default Codec<List<T>> list() {
-        return new ListCodec<>(this);
+    static <T> Codec<T> recursive(Function<Codec<T>, Codec<T>> func) {
+        return new RecursiveCodec<>(func).delegate();
     }
 
-    default <V> Codec<Map<T, V>> mapTo(Codec<V> valueCodec) {
-        return new MapCodec<>(this, valueCodec);
+    static <T> Codec<T> forwardRef(Supplier<Codec<T>> supplier) {
+        return new ForwardRefCodec<>(supplier);
     }
 
-    default Codec<T> optional() {
-        return new OptionalCodec<>(this);
-    }
-
-    default Codec<T> defaultValue(T def) {
-        return new DefaultCodec<>(this, def);
+    default <S> Codec<S> transform(Function<T, S> to, Function<S, T> from) {
+        return new TransformativeCodec<>(this, to, from);
     }
 
     default <R> StructCodec<R> union(
@@ -62,134 +112,46 @@ public interface Codec<T> {
     ) {
         return new UnionCodec<>(keyField, keyCodec, serializers, keyFunc);
     }
-    
-    final class EncodingException extends RuntimeException {
-        public EncodingException(String message) {
-            super(message);
-        }
-    }
-    
-    final class DecodingException extends RuntimeException {
-        public DecodingException(String message) {
-            super(message);
-        }
+
+    default Codec<List<T>> list(int maxSize) {
+        return new ListCodec<>(this, maxSize);
     }
 
-    Codec<Boolean> BOOLEAN = new PrimitiveCodec<>(
-            (t, v) -> t.encodeBoolean(v),
-            (t, v) -> t.decodeBoolean(v)
-    );
-
-    Codec<Byte> BYTE = new PrimitiveCodec<>(
-            (t, v) -> t.encodeByte(v),
-            (t, v) -> t.decodeByte(v)
-    );
-
-    Codec<Short> SHORT = new PrimitiveCodec<>(
-            (t, v) -> t.encodeShort(v),
-            (t, v) -> t.decodeShort(v)
-    );
-
-    Codec<Integer> INT = new PrimitiveCodec<>(
-            (t, v) -> t.encodeInt(v),
-            (t, v) -> t.decodeInt(v)
-    );
-
-    Codec<Long> LONG = new PrimitiveCodec<>(
-            (t, v) -> t.encodeLong(v),
-            (t, v) -> t.decodeLong(v)
-    );
-
-    Codec<Float> FLOAT = new PrimitiveCodec<>(
-            (t, v) -> t.encodeFloat(v),
-            (t, v) -> t.decodeFloat(v)
-    );
-
-    Codec<Double> DOUBLE = new PrimitiveCodec<>(
-            (t, v) -> t.encodeDouble(v),
-            (t, v) -> t.decodeDouble(v)
-    );
-
-    Codec<String> STRING = new PrimitiveCodec<>(
-            (t, v) -> t.encodeString(v),
-            (t, v) -> t.decodeString(v)
-    );
-
-    Codec<byte[]> BYTE_ARRAY = new PrimitiveCodec<>(
-            (t, v) -> t.encodeByteArray(v),
-            (t, v) -> t.decodeByteArray(v)
-    );
-
-    Codec<ByteBuf> BYTE_BUFFER =
-            BYTE_ARRAY.transform(
-                    CodecUtils::toByteBuf,
-                    CodecUtils::toByteArraySafe
-            );
-
-    Codec<int[]> INT_ARRAY = new PrimitiveCodec<>(
-            (t, v) -> t.encodeIntArray(v),
-            (t, v) -> t.decodeIntArray(v)
-    );
-
-    Codec<long[]> LONG_ARRAY = new PrimitiveCodec<>(
-            (t, v) -> t.encodeLongArray(v),
-            (t, v) -> t.decodeLongArray(v)
-    );
-
-    Codec<UUID> UUID =
-            INT_ARRAY.transform(
-                    CodecUtils::intArrayToUuid,
-                    CodecUtils::uuidToIntArray
-            );
-
-    Codec<UUID> UUID_STRING =
-            STRING.transform(
-                    java.util.UUID::fromString,
-                    java.util.UUID::toString
-            );
-
-    static <E extends Enum<E>> Codec<E> enumOf(Class<E> clazz) {
-        return STRING.transform(
-                s -> Enum.valueOf(clazz, s.toUpperCase()),
-                e -> ((Enum<?>) e).name().toLowerCase()
-        );
+    default Codec<List<T>> list() {
+        return list(Integer.MAX_VALUE); 
     }
 
-    static <L, R> Codec<Either<L, R>> either(
-            Codec<L> leftCodec,
-            Codec<R> rightCodec
-    ) {
-        return new EitherCodec<>(leftCodec, rightCodec);
+    default <V> Codec<Map<T, V>> mapValue(Codec<V> valueCodec, int maxSize) {
+        return new MapCodec<>(this, valueCodec, maxSize);
     }
 
-    static <T> Codec<T> recursive(Function<Codec<T>, Codec<T>> self) {
-        return new RecursiveCodec<>(self).delegate();
+    default <V> Codec<Map<T, V>> mapValue(Codec<V> valueCodec) {
+        return mapValue(valueCodec, Integer.MAX_VALUE);
     }
 
-    static <T> ForwardRefCodec<T> forwardRef(Supplier<Codec<T>> supplier) {
-        return new ForwardRefCodec<>(supplier);
+    default Codec<Set<T>> set(int maxSize) {
+        return new SetCodec<>(this, maxSize);
     }
 
-    record PrimitiveCodec<T>(Encoder<T> encoder, Decoder<T> decoder) implements Codec<T> {
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public <D> D encode(Transcoder<D> transcoder, T value) {
-            return (D) encoder.encode((Transcoder<Object>) transcoder, value);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public <D> T decode(Transcoder<D> transcoder, D value) {
-            return decoder.decode((Transcoder<Object>) transcoder, value);
-        }
-
-        private interface Encoder<T> {
-            Object encode(Transcoder<Object> transcoder, T value);
-        }
-
-        private interface Decoder<T> {
-            T decode(Transcoder<Object> transcoder, Object value);
-        }
+    default Codec<Set<T>> set() {
+        return set(Integer.MAX_VALUE);
     }
+
+    default Codec<T> optional() {
+        return new OptionalCodec<>(this);
+    }
+
+    default Codec<T> defaultValue(T def) {
+        return new DefaultCodec<>(this, def);
+    }
+
+    default Codec<T> orElse(Codec<T> other) {
+        return new OrElseCodec<>(this, other);
+    }
+
+    default <S> Codec<T> orElse(Codec<S> other, Function<S, T> mapper) {
+        return new OrElseCodec<>(this, other.transform(mapper, _ -> {
+            throw new UnsupportedOperationException("unreachable");
+        }));
+    } 
 }

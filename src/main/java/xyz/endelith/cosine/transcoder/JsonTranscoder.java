@@ -2,7 +2,6 @@ package xyz.endelith.cosine.transcoder;
 
 import java.util.Collection;
 import java.util.List;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
