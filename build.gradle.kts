@@ -4,16 +4,22 @@ plugins {
 }
 
 group = "xyz.endelith.cosine"
-version = "1.0"
+version = "2.1"
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io/")
+    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
     api("org.jspecify:jspecify:1.0.0")
     api("com.google.code.gson:gson:2.13.0")
     api("io.netty:netty-all:4.2.9.Final")
+    api("com.github.Endelith.adventure:adventure-api:4.25.0") 
+    api("com.github.Endelith.adventure:adventure-nbt:4.25.0")
+    api("com.github.Endelith.adventure:adventure-text-serializer-nbt:4.25.0")
+    api("com.github.Endelith.adventure:adventure-text-serializer-json:4.25.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:6.0.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.0.1")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.1")

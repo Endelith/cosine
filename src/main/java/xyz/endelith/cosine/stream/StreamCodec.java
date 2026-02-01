@@ -1,13 +1,26 @@
 package xyz.endelith.cosine.stream;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.BitSet;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.nbt.BinaryTag;
+import net.kyori.adventure.nbt.BinaryTagType;
+import net.kyori.adventure.nbt.BinaryTagTypes;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.json.JSONComponentSerializer;
+import net.kyori.adventure.text.serializer.nbt.NBTComponentSerializer;
 import xyz.endelith.cosine.codec.CodecUtils;
 import xyz.endelith.cosine.codec.StructCodec.Function10;
 import xyz.endelith.cosine.codec.StructCodec.Function11;
@@ -294,6 +307,105 @@ public interface StreamCodec<T> {
             for (int i = 0; i < size; i++) arr[i] = VAR_LONG.read(buffer);
             return arr;
         }
+    };
+
+    StreamCodec<Key> KEY = STRING.transform(Key::key, Key::asString);
+
+    StreamCodec<BinaryTag> NBT = new StreamCodec<>() {
+
+        private static final List<BinaryTagType<?>> ALL_TYPES = List.of(
+                BinaryTagTypes.END,
+                BinaryTagTypes.BYTE,
+                BinaryTagTypes.SHORT,
+                BinaryTagTypes.INT,
+                BinaryTagTypes.LONG,
+                BinaryTagTypes.FLOAT,
+                BinaryTagTypes.DOUBLE,
+                BinaryTagTypes.BYTE_ARRAY,
+                BinaryTagTypes.STRING,
+                BinaryTagTypes.LIST,
+                BinaryTagTypes.COMPOUND,
+                BinaryTagTypes.INT_ARRAY,
+                BinaryTagTypes.LONG_ARRAY
+        );
+
+        @Override
+        @SuppressWarnings({"rawtypes", "unchecked"})
+        public void write(ByteBuf buffer, BinaryTag value) {
+            try (ByteBufOutputStream outputStream = new ByteBufOutputStream(buffer)) {
+                BinaryTagType type = value.type();
+                buffer.writeByte(type.id());
+                type.write(value, outputStream);
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to write BinaryTag", e);
+            }
+        }
+
+        @Override
+        public BinaryTag read(ByteBuf buffer) {
+            try (ByteBufInputStream inputStream = new ByteBufInputStream(buffer)) {
+                byte id = buffer.readByte();
+                BinaryTagType<?> type = byId(id);
+                return type.read(inputStream);
+            } catch (IOException e) {
+                throw new IllegalStateException("Failed to read BinaryTag", e);
+            }
+        }
+
+        private static BinaryTagType<?> byId(byte id) {
+            for (BinaryTagType<?> type : ALL_TYPES) {
+                if (type.id() == id) return type;
+            }
+            throw new NoSuchElementException("No BinaryTagType with id " + id);
+        }
+    };
+
+    StreamCodec<CompoundBinaryTag> NBT_COMPOUND = new StreamCodec<>() {
+        @Override
+        public void write(ByteBuf buffer, CompoundBinaryTag value) { 
+            NBT.write(buffer, value);
+        }
+    
+        @Override
+        public CompoundBinaryTag read(ByteBuf buffer) {
+            BinaryTag tag = NBT.read(buffer);
+            if (!(tag instanceof CompoundBinaryTag compound)) {
+                throw new IllegalStateException("Expected CompoundBinaryTag, got " + tag.getClass().getSimpleName());
+            }
+            return compound;
+        }
+    };
+
+    StreamCodec<Component> COMPONENT = new StreamCodec<>() {
+        private static final NBTComponentSerializer SERIALIZER = NBTComponentSerializer.nbt();
+
+        @Override
+        public void write(ByteBuf buffer, Component value) {
+            BinaryTag tag = SERIALIZER.serialize(value);
+            NBT.write(buffer, tag);
+        }
+
+        @Override
+        public Component read(ByteBuf buffer) {
+            BinaryTag tag = NBT.read(buffer);
+            return SERIALIZER.deserialize(tag);
+        }
+    };
+
+    StreamCodec<Component> JSON_COMPONENT = new StreamCodec<>() {
+        private static final JSONComponentSerializer SERIALIZER = JSONComponentSerializer.json();
+
+        @Override
+        public void write(ByteBuf buffer, Component value) {
+            String json = SERIALIZER.serialize(value);
+            STRING.write(buffer, json);
+        }
+
+        @Override
+        public Component read(ByteBuf buffer) {
+            String json = STRING.read(buffer); 
+            return SERIALIZER.deserialize(json);
+        } 
     };
 
     StreamCodec<BitSet> BITSET = LONG_ARRAY.transform(BitSet::valueOf, BitSet::toLongArray);

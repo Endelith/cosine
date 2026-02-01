@@ -8,12 +8,20 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.nbt.BinaryTag;
+import net.kyori.adventure.nbt.CompoundBinaryTag;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
+import xyz.endelith.cosine.transcoder.NbtTranscoder;
 import xyz.endelith.cosine.transcoder.Transcoder;
 import xyz.endelith.cosine.type.Either;
 import xyz.endelith.cosine.type.Unit;
 
 public interface Codec<T> extends Decoder<T>, Encoder<T> {
-    
+   
+    Codec<RawValue> RAW_VALUE = new RawValueCodec<>();
+
     Codec<Unit> UNIT = new PrimitiveCodec<Unit>(
         new Decoder<>() {
             @Override
@@ -69,6 +77,28 @@ public interface Codec<T> extends Decoder<T>, Encoder<T> {
         STRING.transform(java.util.UUID::fromString, java.util.UUID::toString);
 
     Codec<UUID> UUID_COERCED = UUID.orElse(UUID_STRING);
+
+    Codec<Key> KEY = STRING.transform(Key::key, Key::asString);
+ 
+    Codec<BinaryTag> NBT = RAW_VALUE.transform(
+            value -> value.convertTo(NbtTranscoder.INSTANCE),
+            value -> RawValue.of(NbtTranscoder.INSTANCE, value));
+        
+    Codec<CompoundBinaryTag> NBT_COMPOUND = NBT.transform(
+            value -> {
+                if (!(value instanceof CompoundBinaryTag compound)) {
+                    throw new IllegalStateException("Expected CompoundBinaryTag, got " + value.getClass().getSimpleName());
+                }
+                return compound;
+            },
+            value -> (BinaryTag) value
+    );
+
+    Codec<Component> JSON_COMPONENT = ComponentCodecs.JSON_COMPONENT;
+
+    Codec<Component> COMPONENT = ComponentCodecs.COMPONENT;
+
+    Codec<Style> COMPONENT_STYLE = ComponentCodecs.STYLE;
 
     static <E extends Enum<E>> Codec<E> enumOf(Class<E> enumClass) {
         Objects.requireNonNull(enumClass, "enum class");
