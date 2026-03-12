@@ -1623,7 +1623,23 @@ public interface StructCodec<R> extends Codec<R> {
             return null;
         }
 
-        return codec.decode(transcoder, map.getValue(key));
+        D rawValue = map.getValue(key);
+        T result;
+        try {
+            result = codec.decode(transcoder, rawValue);
+        } catch (Throwable t) {
+            if (codec instanceof DefaultCodec<?> dc) {
+                return (T) dc.def();
+            }
+            if (codec instanceof OptionalCodec<?>) {
+                return null;
+            }
+            throw t;
+        }
+        if (result == null && codec instanceof DefaultCodec<?> dc) {
+            return (T) dc.def();
+        }
+        return result;
     }
 
     @FunctionalInterface
