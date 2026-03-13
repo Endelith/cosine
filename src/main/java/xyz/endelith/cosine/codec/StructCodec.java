@@ -1542,6 +1542,696 @@ public interface StructCodec<R> extends Codec<R> {
         };
     }
 
+    static <P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, R> StructCodec<R> of(
+            String name1,
+            Codec<P1> codec1,
+            Function<R, P1> getter1,
+            String name2,
+            Codec<P2> codec2,
+            Function<R, P2> getter2,
+            String name3,
+            Codec<P3> codec3,
+            Function<R, P3> getter3,
+            String name4,
+            Codec<P4> codec4,
+            Function<R, P4> getter4,
+            String name5,
+            Codec<P5> codec5,
+            Function<R, P5> getter5,
+            String name6,
+            Codec<P6> codec6,
+            Function<R, P6> getter6,
+            String name7,
+            Codec<P7> codec7,
+            Function<R, P7> getter7,
+            String name8,
+            Codec<P8> codec8,
+            Function<R, P8> getter8,
+            String name9,
+            Codec<P9> codec9,
+            Function<R, P9> getter9,
+            String name10,
+            Codec<P10> codec10,
+            Function<R, P10> getter10,
+            String name11,
+            Codec<P11> codec11,
+            Function<R, P11> getter11,
+            String name12,
+            Codec<P12> codec12,
+            Function<R, P12> getter12,
+            String name13,
+            Codec<P13> codec13,
+            Function<R, P13> getter13,
+            String name14,
+            Codec<P14> codec14,
+            Function<R, P14> getter14,
+            String name15,
+            Codec<P15> codec15,
+            Function<R, P15> getter15,
+            String name16,
+            Codec<P16> codec16,
+            Function<R, P16> getter16,
+            String name17,
+            Codec<P17> codec17,
+            Function<R, P17> getter17,
+            String name18,
+            Codec<P18> codec18,
+            Function<R, P18> getter18,
+            String name19,
+            Codec<P19> codec19,
+            Function<R, P19> getter19,
+            String name20,
+            Codec<P20> codec20,
+            Function<R, P20> getter20,
+            String name21,
+            Codec<P21> codec21,
+            Function<R, P21> getter21,
+            Function21<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, R> constructor
+    ) {
+        return new StructCodec<>() {
+            @Override
+            public <T> T encodeToMap(
+                    Transcoder<T> transcoder,
+                    R value,
+                    Transcoder.VirtualMapBuilder<T> map
+            ) {
+                put(transcoder, codec1, map, name1, getter1.apply(value));
+                put(transcoder, codec2, map, name2, getter2.apply(value));
+                put(transcoder, codec3, map, name3, getter3.apply(value));
+                put(transcoder, codec4, map, name4, getter4.apply(value));
+                put(transcoder, codec5, map, name5, getter5.apply(value));
+                put(transcoder, codec6, map, name6, getter6.apply(value));
+                put(transcoder, codec7, map, name7, getter7.apply(value));
+                put(transcoder, codec8, map, name8, getter8.apply(value));
+                put(transcoder, codec9, map, name9, getter9.apply(value));
+                put(transcoder, codec10, map, name10, getter10.apply(value));
+                put(transcoder, codec11, map, name11, getter11.apply(value));
+                put(transcoder, codec12, map, name12, getter12.apply(value));
+                put(transcoder, codec13, map, name13, getter13.apply(value));
+                put(transcoder, codec14, map, name14, getter14.apply(value));
+                put(transcoder, codec15, map, name15, getter15.apply(value));
+                put(transcoder, codec16, map, name16, getter16.apply(value));
+                put(transcoder, codec17, map, name17, getter17.apply(value));
+                put(transcoder, codec18, map, name18, getter18.apply(value));
+                put(transcoder, codec19, map, name19, getter19.apply(value));
+                put(transcoder, codec20, map, name20, getter20.apply(value));
+                put(transcoder, codec21, map, name21, getter21.apply(value));
+                return map.build();
+            }
+
+            @Override
+            public <T> R decodeFromMap(
+                    Transcoder<T> transcoder,
+                    Transcoder.VirtualMap<T> map
+            ) {
+                P1 r1 = get(transcoder, codec1, name1, map);
+                P2 r2 = get(transcoder, codec2, name2, map);
+                P3 r3 = get(transcoder, codec3, name3, map);
+                P4 r4 = get(transcoder, codec4, name4, map);
+                P5 r5 = get(transcoder, codec5, name5, map);
+                P6 r6 = get(transcoder, codec6, name6, map);
+                P7 r7 = get(transcoder, codec7, name7, map);
+                P8 r8 = get(transcoder, codec8, name8, map);
+                P9 r9 = get(transcoder, codec9, name9, map);
+                P10 r10 = get(transcoder, codec10, name10, map);
+                P11 r11 = get(transcoder, codec11, name11, map);
+                P12 r12 = get(transcoder, codec12, name12, map);
+                P13 r13 = get(transcoder, codec13, name13, map);
+                P14 r14 = get(transcoder, codec14, name14, map);
+                P15 r15 = get(transcoder, codec15, name15, map);
+                P16 r16 = get(transcoder, codec16, name16, map);
+                P17 r17 = get(transcoder, codec17, name17, map);
+                P18 r18 = get(transcoder, codec18, name18, map);
+                P19 r19 = get(transcoder, codec19, name19, map);
+                P20 r20 = get(transcoder, codec20, name20, map);
+                P21 r21 = get(transcoder, codec21, name21, map);
+                return constructor.apply(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, r20, r21);
+            }
+        };
+    }
+
+    static <P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, R> StructCodec<R> of(
+            String name1,
+            Codec<P1> codec1,
+            Function<R, P1> getter1,
+            String name2,
+            Codec<P2> codec2,
+            Function<R, P2> getter2,
+            String name3,
+            Codec<P3> codec3,
+            Function<R, P3> getter3,
+            String name4,
+            Codec<P4> codec4,
+            Function<R, P4> getter4,
+            String name5,
+            Codec<P5> codec5,
+            Function<R, P5> getter5,
+            String name6,
+            Codec<P6> codec6,
+            Function<R, P6> getter6,
+            String name7,
+            Codec<P7> codec7,
+            Function<R, P7> getter7,
+            String name8,
+            Codec<P8> codec8,
+            Function<R, P8> getter8,
+            String name9,
+            Codec<P9> codec9,
+            Function<R, P9> getter9,
+            String name10,
+            Codec<P10> codec10,
+            Function<R, P10> getter10,
+            String name11,
+            Codec<P11> codec11,
+            Function<R, P11> getter11,
+            String name12,
+            Codec<P12> codec12,
+            Function<R, P12> getter12,
+            String name13,
+            Codec<P13> codec13,
+            Function<R, P13> getter13,
+            String name14,
+            Codec<P14> codec14,
+            Function<R, P14> getter14,
+            String name15,
+            Codec<P15> codec15,
+            Function<R, P15> getter15,
+            String name16,
+            Codec<P16> codec16,
+            Function<R, P16> getter16,
+            String name17,
+            Codec<P17> codec17,
+            Function<R, P17> getter17,
+            String name18,
+            Codec<P18> codec18,
+            Function<R, P18> getter18,
+            String name19,
+            Codec<P19> codec19,
+            Function<R, P19> getter19,
+            String name20,
+            Codec<P20> codec20,
+            Function<R, P20> getter20,
+            String name21,
+            Codec<P21> codec21,
+            Function<R, P21> getter21,
+            String name22,
+            Codec<P22> codec22,
+            Function<R, P22> getter22,
+            Function22<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, R> constructor
+    ) {
+        return new StructCodec<>() {
+            @Override
+            public <T> T encodeToMap(
+                    Transcoder<T> transcoder,
+                    R value,
+                    Transcoder.VirtualMapBuilder<T> map
+            ) {
+                put(transcoder, codec1, map, name1, getter1.apply(value));
+                put(transcoder, codec2, map, name2, getter2.apply(value));
+                put(transcoder, codec3, map, name3, getter3.apply(value));
+                put(transcoder, codec4, map, name4, getter4.apply(value));
+                put(transcoder, codec5, map, name5, getter5.apply(value));
+                put(transcoder, codec6, map, name6, getter6.apply(value));
+                put(transcoder, codec7, map, name7, getter7.apply(value));
+                put(transcoder, codec8, map, name8, getter8.apply(value));
+                put(transcoder, codec9, map, name9, getter9.apply(value));
+                put(transcoder, codec10, map, name10, getter10.apply(value));
+                put(transcoder, codec11, map, name11, getter11.apply(value));
+                put(transcoder, codec12, map, name12, getter12.apply(value));
+                put(transcoder, codec13, map, name13, getter13.apply(value));
+                put(transcoder, codec14, map, name14, getter14.apply(value));
+                put(transcoder, codec15, map, name15, getter15.apply(value));
+                put(transcoder, codec16, map, name16, getter16.apply(value));
+                put(transcoder, codec17, map, name17, getter17.apply(value));
+                put(transcoder, codec18, map, name18, getter18.apply(value));
+                put(transcoder, codec19, map, name19, getter19.apply(value));
+                put(transcoder, codec20, map, name20, getter20.apply(value));
+                put(transcoder, codec21, map, name21, getter21.apply(value));
+                put(transcoder, codec22, map, name22, getter22.apply(value));
+                return map.build();
+            }
+
+            @Override
+            public <T> R decodeFromMap(
+                    Transcoder<T> transcoder,
+                    Transcoder.VirtualMap<T> map
+            ) {
+                P1 r1 = get(transcoder, codec1, name1, map);
+                P2 r2 = get(transcoder, codec2, name2, map);
+                P3 r3 = get(transcoder, codec3, name3, map);
+                P4 r4 = get(transcoder, codec4, name4, map);
+                P5 r5 = get(transcoder, codec5, name5, map);
+                P6 r6 = get(transcoder, codec6, name6, map);
+                P7 r7 = get(transcoder, codec7, name7, map);
+                P8 r8 = get(transcoder, codec8, name8, map);
+                P9 r9 = get(transcoder, codec9, name9, map);
+                P10 r10 = get(transcoder, codec10, name10, map);
+                P11 r11 = get(transcoder, codec11, name11, map);
+                P12 r12 = get(transcoder, codec12, name12, map);
+                P13 r13 = get(transcoder, codec13, name13, map);
+                P14 r14 = get(transcoder, codec14, name14, map);
+                P15 r15 = get(transcoder, codec15, name15, map);
+                P16 r16 = get(transcoder, codec16, name16, map);
+                P17 r17 = get(transcoder, codec17, name17, map);
+                P18 r18 = get(transcoder, codec18, name18, map);
+                P19 r19 = get(transcoder, codec19, name19, map);
+                P20 r20 = get(transcoder, codec20, name20, map);
+                P21 r21 = get(transcoder, codec21, name21, map);
+                P22 r22 = get(transcoder, codec22, name22, map);
+                return constructor.apply(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, r20, r21, r22);
+            }
+        };
+    }
+
+    static <P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, R> StructCodec<R> of(
+            String name1,
+            Codec<P1> codec1,
+            Function<R, P1> getter1,
+            String name2,
+            Codec<P2> codec2,
+            Function<R, P2> getter2,
+            String name3,
+            Codec<P3> codec3,
+            Function<R, P3> getter3,
+            String name4,
+            Codec<P4> codec4,
+            Function<R, P4> getter4,
+            String name5,
+            Codec<P5> codec5,
+            Function<R, P5> getter5,
+            String name6,
+            Codec<P6> codec6,
+            Function<R, P6> getter6,
+            String name7,
+            Codec<P7> codec7,
+            Function<R, P7> getter7,
+            String name8,
+            Codec<P8> codec8,
+            Function<R, P8> getter8,
+            String name9,
+            Codec<P9> codec9,
+            Function<R, P9> getter9,
+            String name10,
+            Codec<P10> codec10,
+            Function<R, P10> getter10,
+            String name11,
+            Codec<P11> codec11,
+            Function<R, P11> getter11,
+            String name12,
+            Codec<P12> codec12,
+            Function<R, P12> getter12,
+            String name13,
+            Codec<P13> codec13,
+            Function<R, P13> getter13,
+            String name14,
+            Codec<P14> codec14,
+            Function<R, P14> getter14,
+            String name15,
+            Codec<P15> codec15,
+            Function<R, P15> getter15,
+            String name16,
+            Codec<P16> codec16,
+            Function<R, P16> getter16,
+            String name17,
+            Codec<P17> codec17,
+            Function<R, P17> getter17,
+            String name18,
+            Codec<P18> codec18,
+            Function<R, P18> getter18,
+            String name19,
+            Codec<P19> codec19,
+            Function<R, P19> getter19,
+            String name20,
+            Codec<P20> codec20,
+            Function<R, P20> getter20,
+            String name21,
+            Codec<P21> codec21,
+            Function<R, P21> getter21,
+            String name22,
+            Codec<P22> codec22,
+            Function<R, P22> getter22,
+            String name23,
+            Codec<P23> codec23,
+            Function<R, P23> getter23,
+            Function23<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, R> constructor
+    ) {
+        return new StructCodec<>() {
+            @Override
+            public <T> T encodeToMap(
+                    Transcoder<T> transcoder,
+                    R value,
+                    Transcoder.VirtualMapBuilder<T> map
+            ) {
+                put(transcoder, codec1, map, name1, getter1.apply(value));
+                put(transcoder, codec2, map, name2, getter2.apply(value));
+                put(transcoder, codec3, map, name3, getter3.apply(value));
+                put(transcoder, codec4, map, name4, getter4.apply(value));
+                put(transcoder, codec5, map, name5, getter5.apply(value));
+                put(transcoder, codec6, map, name6, getter6.apply(value));
+                put(transcoder, codec7, map, name7, getter7.apply(value));
+                put(transcoder, codec8, map, name8, getter8.apply(value));
+                put(transcoder, codec9, map, name9, getter9.apply(value));
+                put(transcoder, codec10, map, name10, getter10.apply(value));
+                put(transcoder, codec11, map, name11, getter11.apply(value));
+                put(transcoder, codec12, map, name12, getter12.apply(value));
+                put(transcoder, codec13, map, name13, getter13.apply(value));
+                put(transcoder, codec14, map, name14, getter14.apply(value));
+                put(transcoder, codec15, map, name15, getter15.apply(value));
+                put(transcoder, codec16, map, name16, getter16.apply(value));
+                put(transcoder, codec17, map, name17, getter17.apply(value));
+                put(transcoder, codec18, map, name18, getter18.apply(value));
+                put(transcoder, codec19, map, name19, getter19.apply(value));
+                put(transcoder, codec20, map, name20, getter20.apply(value));
+                put(transcoder, codec21, map, name21, getter21.apply(value));
+                put(transcoder, codec22, map, name22, getter22.apply(value));
+                put(transcoder, codec23, map, name23, getter23.apply(value));
+                return map.build();
+            }
+
+            @Override
+            public <T> R decodeFromMap(
+                    Transcoder<T> transcoder,
+                    Transcoder.VirtualMap<T> map
+            ) {
+                P1 r1 = get(transcoder, codec1, name1, map);
+                P2 r2 = get(transcoder, codec2, name2, map);
+                P3 r3 = get(transcoder, codec3, name3, map);
+                P4 r4 = get(transcoder, codec4, name4, map);
+                P5 r5 = get(transcoder, codec5, name5, map);
+                P6 r6 = get(transcoder, codec6, name6, map);
+                P7 r7 = get(transcoder, codec7, name7, map);
+                P8 r8 = get(transcoder, codec8, name8, map);
+                P9 r9 = get(transcoder, codec9, name9, map);
+                P10 r10 = get(transcoder, codec10, name10, map);
+                P11 r11 = get(transcoder, codec11, name11, map);
+                P12 r12 = get(transcoder, codec12, name12, map);
+                P13 r13 = get(transcoder, codec13, name13, map);
+                P14 r14 = get(transcoder, codec14, name14, map);
+                P15 r15 = get(transcoder, codec15, name15, map);
+                P16 r16 = get(transcoder, codec16, name16, map);
+                P17 r17 = get(transcoder, codec17, name17, map);
+                P18 r18 = get(transcoder, codec18, name18, map);
+                P19 r19 = get(transcoder, codec19, name19, map);
+                P20 r20 = get(transcoder, codec20, name20, map);
+                P21 r21 = get(transcoder, codec21, name21, map);
+                P22 r22 = get(transcoder, codec22, name22, map);
+                P23 r23 = get(transcoder, codec23, name23, map);
+                return constructor.apply(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, r20, r21, r22, r23);
+            }
+        };
+    }
+
+    static <P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, R> StructCodec<R> of(
+            String name1,
+            Codec<P1> codec1,
+            Function<R, P1> getter1,
+            String name2,
+            Codec<P2> codec2,
+            Function<R, P2> getter2,
+            String name3,
+            Codec<P3> codec3,
+            Function<R, P3> getter3,
+            String name4,
+            Codec<P4> codec4,
+            Function<R, P4> getter4,
+            String name5,
+            Codec<P5> codec5,
+            Function<R, P5> getter5,
+            String name6,
+            Codec<P6> codec6,
+            Function<R, P6> getter6,
+            String name7,
+            Codec<P7> codec7,
+            Function<R, P7> getter7,
+            String name8,
+            Codec<P8> codec8,
+            Function<R, P8> getter8,
+            String name9,
+            Codec<P9> codec9,
+            Function<R, P9> getter9,
+            String name10,
+            Codec<P10> codec10,
+            Function<R, P10> getter10,
+            String name11,
+            Codec<P11> codec11,
+            Function<R, P11> getter11,
+            String name12,
+            Codec<P12> codec12,
+            Function<R, P12> getter12,
+            String name13,
+            Codec<P13> codec13,
+            Function<R, P13> getter13,
+            String name14,
+            Codec<P14> codec14,
+            Function<R, P14> getter14,
+            String name15,
+            Codec<P15> codec15,
+            Function<R, P15> getter15,
+            String name16,
+            Codec<P16> codec16,
+            Function<R, P16> getter16,
+            String name17,
+            Codec<P17> codec17,
+            Function<R, P17> getter17,
+            String name18,
+            Codec<P18> codec18,
+            Function<R, P18> getter18,
+            String name19,
+            Codec<P19> codec19,
+            Function<R, P19> getter19,
+            String name20,
+            Codec<P20> codec20,
+            Function<R, P20> getter20,
+            String name21,
+            Codec<P21> codec21,
+            Function<R, P21> getter21,
+            String name22,
+            Codec<P22> codec22,
+            Function<R, P22> getter22,
+            String name23,
+            Codec<P23> codec23,
+            Function<R, P23> getter23,
+            String name24,
+            Codec<P24> codec24,
+            Function<R, P24> getter24,
+            Function24<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, R> constructor
+    ) {
+        return new StructCodec<>() {
+            @Override
+            public <T> T encodeToMap(
+                    Transcoder<T> transcoder,
+                    R value,
+                    Transcoder.VirtualMapBuilder<T> map
+            ) {
+                put(transcoder, codec1, map, name1, getter1.apply(value));
+                put(transcoder, codec2, map, name2, getter2.apply(value));
+                put(transcoder, codec3, map, name3, getter3.apply(value));
+                put(transcoder, codec4, map, name4, getter4.apply(value));
+                put(transcoder, codec5, map, name5, getter5.apply(value));
+                put(transcoder, codec6, map, name6, getter6.apply(value));
+                put(transcoder, codec7, map, name7, getter7.apply(value));
+                put(transcoder, codec8, map, name8, getter8.apply(value));
+                put(transcoder, codec9, map, name9, getter9.apply(value));
+                put(transcoder, codec10, map, name10, getter10.apply(value));
+                put(transcoder, codec11, map, name11, getter11.apply(value));
+                put(transcoder, codec12, map, name12, getter12.apply(value));
+                put(transcoder, codec13, map, name13, getter13.apply(value));
+                put(transcoder, codec14, map, name14, getter14.apply(value));
+                put(transcoder, codec15, map, name15, getter15.apply(value));
+                put(transcoder, codec16, map, name16, getter16.apply(value));
+                put(transcoder, codec17, map, name17, getter17.apply(value));
+                put(transcoder, codec18, map, name18, getter18.apply(value));
+                put(transcoder, codec19, map, name19, getter19.apply(value));
+                put(transcoder, codec20, map, name20, getter20.apply(value));
+                put(transcoder, codec21, map, name21, getter21.apply(value));
+                put(transcoder, codec22, map, name22, getter22.apply(value));
+                put(transcoder, codec23, map, name23, getter23.apply(value));
+                put(transcoder, codec24, map, name24, getter24.apply(value));
+                return map.build();
+            }
+
+            @Override
+            public <T> R decodeFromMap(
+                    Transcoder<T> transcoder,
+                    Transcoder.VirtualMap<T> map
+            ) {
+                P1 r1 = get(transcoder, codec1, name1, map);
+                P2 r2 = get(transcoder, codec2, name2, map);
+                P3 r3 = get(transcoder, codec3, name3, map);
+                P4 r4 = get(transcoder, codec4, name4, map);
+                P5 r5 = get(transcoder, codec5, name5, map);
+                P6 r6 = get(transcoder, codec6, name6, map);
+                P7 r7 = get(transcoder, codec7, name7, map);
+                P8 r8 = get(transcoder, codec8, name8, map);
+                P9 r9 = get(transcoder, codec9, name9, map);
+                P10 r10 = get(transcoder, codec10, name10, map);
+                P11 r11 = get(transcoder, codec11, name11, map);
+                P12 r12 = get(transcoder, codec12, name12, map);
+                P13 r13 = get(transcoder, codec13, name13, map);
+                P14 r14 = get(transcoder, codec14, name14, map);
+                P15 r15 = get(transcoder, codec15, name15, map);
+                P16 r16 = get(transcoder, codec16, name16, map);
+                P17 r17 = get(transcoder, codec17, name17, map);
+                P18 r18 = get(transcoder, codec18, name18, map);
+                P19 r19 = get(transcoder, codec19, name19, map);
+                P20 r20 = get(transcoder, codec20, name20, map);
+                P21 r21 = get(transcoder, codec21, name21, map);
+                P22 r22 = get(transcoder, codec22, name22, map);
+                P23 r23 = get(transcoder, codec23, name23, map);
+                P24 r24 = get(transcoder, codec24, name24, map);
+                return constructor.apply(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, r20, r21, r22, r23, r24);
+            }
+        };
+    }
+
+    static <P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, P25, R> StructCodec<R> of(
+            String name1,
+            Codec<P1> codec1,
+            Function<R, P1> getter1,
+            String name2,
+            Codec<P2> codec2,
+            Function<R, P2> getter2,
+            String name3,
+            Codec<P3> codec3,
+            Function<R, P3> getter3,
+            String name4,
+            Codec<P4> codec4,
+            Function<R, P4> getter4,
+            String name5,
+            Codec<P5> codec5,
+            Function<R, P5> getter5,
+            String name6,
+            Codec<P6> codec6,
+            Function<R, P6> getter6,
+            String name7,
+            Codec<P7> codec7,
+            Function<R, P7> getter7,
+            String name8,
+            Codec<P8> codec8,
+            Function<R, P8> getter8,
+            String name9,
+            Codec<P9> codec9,
+            Function<R, P9> getter9,
+            String name10,
+            Codec<P10> codec10,
+            Function<R, P10> getter10,
+            String name11,
+            Codec<P11> codec11,
+            Function<R, P11> getter11,
+            String name12,
+            Codec<P12> codec12,
+            Function<R, P12> getter12,
+            String name13,
+            Codec<P13> codec13,
+            Function<R, P13> getter13,
+            String name14,
+            Codec<P14> codec14,
+            Function<R, P14> getter14,
+            String name15,
+            Codec<P15> codec15,
+            Function<R, P15> getter15,
+            String name16,
+            Codec<P16> codec16,
+            Function<R, P16> getter16,
+            String name17,
+            Codec<P17> codec17,
+            Function<R, P17> getter17,
+            String name18,
+            Codec<P18> codec18,
+            Function<R, P18> getter18,
+            String name19,
+            Codec<P19> codec19,
+            Function<R, P19> getter19,
+            String name20,
+            Codec<P20> codec20,
+            Function<R, P20> getter20,
+            String name21,
+            Codec<P21> codec21,
+            Function<R, P21> getter21,
+            String name22,
+            Codec<P22> codec22,
+            Function<R, P22> getter22,
+            String name23,
+            Codec<P23> codec23,
+            Function<R, P23> getter23,
+            String name24,
+            Codec<P24> codec24,
+            Function<R, P24> getter24,
+            String name25,
+            Codec<P25> codec25,
+            Function<R, P25> getter25,
+            Function25<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, P25, R> constructor
+    ) {
+        return new StructCodec<>() {
+            @Override
+            public <T> T encodeToMap(
+                    Transcoder<T> transcoder,
+                    R value,
+                    Transcoder.VirtualMapBuilder<T> map
+            ) {
+                put(transcoder, codec1, map, name1, getter1.apply(value));
+                put(transcoder, codec2, map, name2, getter2.apply(value));
+                put(transcoder, codec3, map, name3, getter3.apply(value));
+                put(transcoder, codec4, map, name4, getter4.apply(value));
+                put(transcoder, codec5, map, name5, getter5.apply(value));
+                put(transcoder, codec6, map, name6, getter6.apply(value));
+                put(transcoder, codec7, map, name7, getter7.apply(value));
+                put(transcoder, codec8, map, name8, getter8.apply(value));
+                put(transcoder, codec9, map, name9, getter9.apply(value));
+                put(transcoder, codec10, map, name10, getter10.apply(value));
+                put(transcoder, codec11, map, name11, getter11.apply(value));
+                put(transcoder, codec12, map, name12, getter12.apply(value));
+                put(transcoder, codec13, map, name13, getter13.apply(value));
+                put(transcoder, codec14, map, name14, getter14.apply(value));
+                put(transcoder, codec15, map, name15, getter15.apply(value));
+                put(transcoder, codec16, map, name16, getter16.apply(value));
+                put(transcoder, codec17, map, name17, getter17.apply(value));
+                put(transcoder, codec18, map, name18, getter18.apply(value));
+                put(transcoder, codec19, map, name19, getter19.apply(value));
+                put(transcoder, codec20, map, name20, getter20.apply(value));
+                put(transcoder, codec21, map, name21, getter21.apply(value));
+                put(transcoder, codec22, map, name22, getter22.apply(value));
+                put(transcoder, codec23, map, name23, getter23.apply(value));
+                put(transcoder, codec24, map, name24, getter24.apply(value));
+                put(transcoder, codec25, map, name25, getter25.apply(value));
+                return map.build();
+            }
+
+            @Override
+            public <T> R decodeFromMap(
+                    Transcoder<T> transcoder,
+                    Transcoder.VirtualMap<T> map
+            ) {
+                P1 r1 = get(transcoder, codec1, name1, map);
+                P2 r2 = get(transcoder, codec2, name2, map);
+                P3 r3 = get(transcoder, codec3, name3, map);
+                P4 r4 = get(transcoder, codec4, name4, map);
+                P5 r5 = get(transcoder, codec5, name5, map);
+                P6 r6 = get(transcoder, codec6, name6, map);
+                P7 r7 = get(transcoder, codec7, name7, map);
+                P8 r8 = get(transcoder, codec8, name8, map);
+                P9 r9 = get(transcoder, codec9, name9, map);
+                P10 r10 = get(transcoder, codec10, name10, map);
+                P11 r11 = get(transcoder, codec11, name11, map);
+                P12 r12 = get(transcoder, codec12, name12, map);
+                P13 r13 = get(transcoder, codec13, name13, map);
+                P14 r14 = get(transcoder, codec14, name14, map);
+                P15 r15 = get(transcoder, codec15, name15, map);
+                P16 r16 = get(transcoder, codec16, name16, map);
+                P17 r17 = get(transcoder, codec17, name17, map);
+                P18 r18 = get(transcoder, codec18, name18, map);
+                P19 r19 = get(transcoder, codec19, name19, map);
+                P20 r20 = get(transcoder, codec20, name20, map);
+                P21 r21 = get(transcoder, codec21, name21, map);
+                P22 r22 = get(transcoder, codec22, name22, map);
+                P23 r23 = get(transcoder, codec23, name23, map);
+                P24 r24 = get(transcoder, codec24, name24, map);
+                P25 r25 = get(transcoder, codec25, name25, map);
+                return constructor.apply(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18, r19, r20, r21, r22, r23, r24, r25);
+            }
+        };
+    }
+
 
     @SuppressWarnings("unchecked")
     static <D, T> D put(
@@ -1745,5 +2435,30 @@ public interface StructCodec<R> extends Codec<R> {
     @FunctionalInterface
     interface Function20<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, R> {
         R apply(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8, P9 p9, P10 p10, P11 p11, P12 p12, P13 p13, P14 p14, P15 p15, P16 p16, P17 p17, P18 p18, P19 p19, P20 p20);
-    }    
+    }
+
+    @FunctionalInterface
+    interface Function21<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, R> {
+        R apply(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8, P9 p9, P10 p10, P11 p11, P12 p12, P13 p13, P14 p14, P15 p15, P16 p16, P17 p17, P18 p18, P19 p19, P20 p20, P21 p21);
+    }
+    
+    @FunctionalInterface
+    interface Function22<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, R> {
+        R apply(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8, P9 p9, P10 p10, P11 p11, P12 p12, P13 p13, P14 p14, P15 p15, P16 p16, P17 p17, P18 p18, P19 p19, P20 p20, P21 p21, P22 p22);
+    }
+    
+    @FunctionalInterface
+    interface Function23<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, R> {
+        R apply(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8, P9 p9, P10 p10, P11 p11, P12 p12, P13 p13, P14 p14, P15 p15, P16 p16, P17 p17, P18 p18, P19 p19, P20 p20, P21 p21, P22 p22, P23 p23);
+    }
+    
+    @FunctionalInterface
+    interface Function24<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, R> {
+        R apply(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8, P9 p9, P10 p10, P11 p11, P12 p12, P13 p13, P14 p14, P15 p15, P16 p16, P17 p17, P18 p18, P19 p19, P20 p20, P21 p21, P22 p22, P23 p23, P24 p24);
+    }
+    
+    @FunctionalInterface
+    interface Function25<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, P25, R> {
+        R apply(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8, P9 p9, P10 p10, P11 p11, P12 p12, P13 p13, P14 p14, P15 p15, P16 p16, P17 p17, P18 p18, P19 p19, P20 p20, P21 p21, P22 p22, P23 p23, P24 p24, P25 p25);
+    }
 }

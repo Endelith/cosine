@@ -34,6 +34,11 @@ import xyz.endelith.cosine.codec.StructCodec.Function18;
 import xyz.endelith.cosine.codec.StructCodec.Function19;
 import xyz.endelith.cosine.codec.StructCodec.Function2;
 import xyz.endelith.cosine.codec.StructCodec.Function20;
+import xyz.endelith.cosine.codec.StructCodec.Function21;
+import xyz.endelith.cosine.codec.StructCodec.Function22;
+import xyz.endelith.cosine.codec.StructCodec.Function23;
+import xyz.endelith.cosine.codec.StructCodec.Function24;
+import xyz.endelith.cosine.codec.StructCodec.Function25;
 import xyz.endelith.cosine.codec.StructCodec.Function3;
 import xyz.endelith.cosine.codec.StructCodec.Function4;
 import xyz.endelith.cosine.codec.StructCodec.Function5;
@@ -1417,4 +1422,425 @@ public interface StreamCodec<T> {
             }
         };
     }
+
+    public static <R, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21> StreamCodec<R> of(
+        StreamCodec<P1> codec1, Function<R, P1> getter1,
+        StreamCodec<P2> codec2, Function<R, P2> getter2,
+        StreamCodec<P3> codec3, Function<R, P3> getter3,
+        StreamCodec<P4> codec4, Function<R, P4> getter4,
+        StreamCodec<P5> codec5, Function<R, P5> getter5,
+        StreamCodec<P6> codec6, Function<R, P6> getter6,
+        StreamCodec<P7> codec7, Function<R, P7> getter7,
+        StreamCodec<P8> codec8, Function<R, P8> getter8,
+        StreamCodec<P9> codec9, Function<R, P9> getter9,
+        StreamCodec<P10> codec10, Function<R, P10> getter10,
+        StreamCodec<P11> codec11, Function<R, P11> getter11,
+        StreamCodec<P12> codec12, Function<R, P12> getter12,
+        StreamCodec<P13> codec13, Function<R, P13> getter13,
+        StreamCodec<P14> codec14, Function<R, P14> getter14,
+        StreamCodec<P15> codec15, Function<R, P15> getter15,
+        StreamCodec<P16> codec16, Function<R, P16> getter16,
+        StreamCodec<P17> codec17, Function<R, P17> getter17,
+        StreamCodec<P18> codec18, Function<R, P18> getter18,
+        StreamCodec<P19> codec19, Function<R, P19> getter19,
+        StreamCodec<P20> codec20, Function<R, P20> getter20,
+        StreamCodec<P21> codec21, Function<R, P21> getter21,
+        Function21<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, R> supplier
+    ) {
+        return new StreamCodec<>() {
+            @Override
+            public void write(ByteBuf buffer, R value) {
+                codec1.write(buffer, getter1.apply(value));
+                codec2.write(buffer, getter2.apply(value));
+                codec3.write(buffer, getter3.apply(value));
+                codec4.write(buffer, getter4.apply(value));
+                codec5.write(buffer, getter5.apply(value));
+                codec6.write(buffer, getter6.apply(value));
+                codec7.write(buffer, getter7.apply(value));
+                codec8.write(buffer, getter8.apply(value));
+                codec9.write(buffer, getter9.apply(value));
+                codec10.write(buffer, getter10.apply(value));
+                codec11.write(buffer, getter11.apply(value));
+                codec12.write(buffer, getter12.apply(value));
+                codec13.write(buffer, getter13.apply(value));
+                codec14.write(buffer, getter14.apply(value));
+                codec15.write(buffer, getter15.apply(value));
+                codec16.write(buffer, getter16.apply(value));
+                codec17.write(buffer, getter17.apply(value));
+                codec18.write(buffer, getter18.apply(value));
+                codec19.write(buffer, getter19.apply(value));
+                codec20.write(buffer, getter20.apply(value));
+                codec21.write(buffer, getter21.apply(value));
+            }
+
+            @Override
+            public R read(ByteBuf buffer) {
+                P1 result1 = codec1.read(buffer);
+                P2 result2 = codec2.read(buffer);
+                P3 result3 = codec3.read(buffer);
+                P4 result4 = codec4.read(buffer);
+                P5 result5 = codec5.read(buffer);
+                P6 result6 = codec6.read(buffer);
+                P7 result7 = codec7.read(buffer);
+                P8 result8 = codec8.read(buffer);
+                P9 result9 = codec9.read(buffer);
+                P10 result10 = codec10.read(buffer);
+                P11 result11 = codec11.read(buffer);
+                P12 result12 = codec12.read(buffer);
+                P13 result13 = codec13.read(buffer);
+                P14 result14 = codec14.read(buffer);
+                P15 result15 = codec15.read(buffer);
+                P16 result16 = codec16.read(buffer);
+                P17 result17 = codec17.read(buffer);
+                P18 result18 = codec18.read(buffer);
+                P19 result19 = codec19.read(buffer);
+                P20 result20 = codec20.read(buffer);
+                P21 result21 = codec21.read(buffer);
+                return supplier.apply(result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12, result13, result14, result15, result16, result17, result18, result19, result20, result21);
+            }
+        };
+    }
+
+    public static <R, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22> StreamCodec<R> of(
+        StreamCodec<P1> codec1, Function<R, P1> getter1,
+        StreamCodec<P2> codec2, Function<R, P2> getter2,
+        StreamCodec<P3> codec3, Function<R, P3> getter3,
+        StreamCodec<P4> codec4, Function<R, P4> getter4,
+        StreamCodec<P5> codec5, Function<R, P5> getter5,
+        StreamCodec<P6> codec6, Function<R, P6> getter6,
+        StreamCodec<P7> codec7, Function<R, P7> getter7,
+        StreamCodec<P8> codec8, Function<R, P8> getter8,
+        StreamCodec<P9> codec9, Function<R, P9> getter9,
+        StreamCodec<P10> codec10, Function<R, P10> getter10,
+        StreamCodec<P11> codec11, Function<R, P11> getter11,
+        StreamCodec<P12> codec12, Function<R, P12> getter12,
+        StreamCodec<P13> codec13, Function<R, P13> getter13,
+        StreamCodec<P14> codec14, Function<R, P14> getter14,
+        StreamCodec<P15> codec15, Function<R, P15> getter15,
+        StreamCodec<P16> codec16, Function<R, P16> getter16,
+        StreamCodec<P17> codec17, Function<R, P17> getter17,
+        StreamCodec<P18> codec18, Function<R, P18> getter18,
+        StreamCodec<P19> codec19, Function<R, P19> getter19,
+        StreamCodec<P20> codec20, Function<R, P20> getter20,
+        StreamCodec<P21> codec21, Function<R, P21> getter21,
+        StreamCodec<P22> codec22, Function<R, P22> getter22,
+        Function22<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, R> supplier
+    ) {
+        return new StreamCodec<>() {
+            @Override
+            public void write(ByteBuf buffer, R value) {
+                codec1.write(buffer, getter1.apply(value));
+                codec2.write(buffer, getter2.apply(value));
+                codec3.write(buffer, getter3.apply(value));
+                codec4.write(buffer, getter4.apply(value));
+                codec5.write(buffer, getter5.apply(value));
+                codec6.write(buffer, getter6.apply(value));
+                codec7.write(buffer, getter7.apply(value));
+                codec8.write(buffer, getter8.apply(value));
+                codec9.write(buffer, getter9.apply(value));
+                codec10.write(buffer, getter10.apply(value));
+                codec11.write(buffer, getter11.apply(value));
+                codec12.write(buffer, getter12.apply(value));
+                codec13.write(buffer, getter13.apply(value));
+                codec14.write(buffer, getter14.apply(value));
+                codec15.write(buffer, getter15.apply(value));
+                codec16.write(buffer, getter16.apply(value));
+                codec17.write(buffer, getter17.apply(value));
+                codec18.write(buffer, getter18.apply(value));
+                codec19.write(buffer, getter19.apply(value));
+                codec20.write(buffer, getter20.apply(value));
+                codec21.write(buffer, getter21.apply(value));
+                codec22.write(buffer, getter22.apply(value));
+            }
+
+            @Override
+            public R read(ByteBuf buffer) {
+                P1 result1 = codec1.read(buffer);
+                P2 result2 = codec2.read(buffer);
+                P3 result3 = codec3.read(buffer);
+                P4 result4 = codec4.read(buffer);
+                P5 result5 = codec5.read(buffer);
+                P6 result6 = codec6.read(buffer);
+                P7 result7 = codec7.read(buffer);
+                P8 result8 = codec8.read(buffer);
+                P9 result9 = codec9.read(buffer);
+                P10 result10 = codec10.read(buffer);
+                P11 result11 = codec11.read(buffer);
+                P12 result12 = codec12.read(buffer);
+                P13 result13 = codec13.read(buffer);
+                P14 result14 = codec14.read(buffer);
+                P15 result15 = codec15.read(buffer);
+                P16 result16 = codec16.read(buffer);
+                P17 result17 = codec17.read(buffer);
+                P18 result18 = codec18.read(buffer);
+                P19 result19 = codec19.read(buffer);
+                P20 result20 = codec20.read(buffer);
+                P21 result21 = codec21.read(buffer);
+                P22 result22 = codec22.read(buffer);
+                return supplier.apply(result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12, result13, result14, result15, result16, result17, result18, result19, result20, result21, result22);
+            }
+        };
+    }
+
+    public static <R, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23> StreamCodec<R> of(
+        StreamCodec<P1> codec1, Function<R, P1> getter1,
+        StreamCodec<P2> codec2, Function<R, P2> getter2,
+        StreamCodec<P3> codec3, Function<R, P3> getter3,
+        StreamCodec<P4> codec4, Function<R, P4> getter4,
+        StreamCodec<P5> codec5, Function<R, P5> getter5,
+        StreamCodec<P6> codec6, Function<R, P6> getter6,
+        StreamCodec<P7> codec7, Function<R, P7> getter7,
+        StreamCodec<P8> codec8, Function<R, P8> getter8,
+        StreamCodec<P9> codec9, Function<R, P9> getter9,
+        StreamCodec<P10> codec10, Function<R, P10> getter10,
+        StreamCodec<P11> codec11, Function<R, P11> getter11,
+        StreamCodec<P12> codec12, Function<R, P12> getter12,
+        StreamCodec<P13> codec13, Function<R, P13> getter13,
+        StreamCodec<P14> codec14, Function<R, P14> getter14,
+        StreamCodec<P15> codec15, Function<R, P15> getter15,
+        StreamCodec<P16> codec16, Function<R, P16> getter16,
+        StreamCodec<P17> codec17, Function<R, P17> getter17,
+        StreamCodec<P18> codec18, Function<R, P18> getter18,
+        StreamCodec<P19> codec19, Function<R, P19> getter19,
+        StreamCodec<P20> codec20, Function<R, P20> getter20,
+        StreamCodec<P21> codec21, Function<R, P21> getter21,
+        StreamCodec<P22> codec22, Function<R, P22> getter22,
+        StreamCodec<P23> codec23, Function<R, P23> getter23,
+        Function23<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, R> supplier
+    ) {
+        return new StreamCodec<>() {
+            @Override
+            public void write(ByteBuf buffer, R value) {
+                codec1.write(buffer, getter1.apply(value));
+                codec2.write(buffer, getter2.apply(value));
+                codec3.write(buffer, getter3.apply(value));
+                codec4.write(buffer, getter4.apply(value));
+                codec5.write(buffer, getter5.apply(value));
+                codec6.write(buffer, getter6.apply(value));
+                codec7.write(buffer, getter7.apply(value));
+                codec8.write(buffer, getter8.apply(value));
+                codec9.write(buffer, getter9.apply(value));
+                codec10.write(buffer, getter10.apply(value));
+                codec11.write(buffer, getter11.apply(value));
+                codec12.write(buffer, getter12.apply(value));
+                codec13.write(buffer, getter13.apply(value));
+                codec14.write(buffer, getter14.apply(value));
+                codec15.write(buffer, getter15.apply(value));
+                codec16.write(buffer, getter16.apply(value));
+                codec17.write(buffer, getter17.apply(value));
+                codec18.write(buffer, getter18.apply(value));
+                codec19.write(buffer, getter19.apply(value));
+                codec20.write(buffer, getter20.apply(value));
+                codec21.write(buffer, getter21.apply(value));
+                codec22.write(buffer, getter22.apply(value));
+                codec23.write(buffer, getter23.apply(value));
+            }
+
+            @Override
+            public R read(ByteBuf buffer) {
+                P1 result1 = codec1.read(buffer);
+                P2 result2 = codec2.read(buffer);
+                P3 result3 = codec3.read(buffer);
+                P4 result4 = codec4.read(buffer);
+                P5 result5 = codec5.read(buffer);
+                P6 result6 = codec6.read(buffer);
+                P7 result7 = codec7.read(buffer);
+                P8 result8 = codec8.read(buffer);
+                P9 result9 = codec9.read(buffer);
+                P10 result10 = codec10.read(buffer);
+                P11 result11 = codec11.read(buffer);
+                P12 result12 = codec12.read(buffer);
+                P13 result13 = codec13.read(buffer);
+                P14 result14 = codec14.read(buffer);
+                P15 result15 = codec15.read(buffer);
+                P16 result16 = codec16.read(buffer);
+                P17 result17 = codec17.read(buffer);
+                P18 result18 = codec18.read(buffer);
+                P19 result19 = codec19.read(buffer);
+                P20 result20 = codec20.read(buffer);
+                P21 result21 = codec21.read(buffer);
+                P22 result22 = codec22.read(buffer);
+                P23 result23 = codec23.read(buffer);
+                return supplier.apply(result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12, result13, result14, result15, result16, result17, result18, result19, result20, result21, result22, result23);
+            }
+        };
+    }
+
+    public static <R, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24> StreamCodec<R> of(
+        StreamCodec<P1> codec1, Function<R, P1> getter1,
+        StreamCodec<P2> codec2, Function<R, P2> getter2,
+        StreamCodec<P3> codec3, Function<R, P3> getter3,
+        StreamCodec<P4> codec4, Function<R, P4> getter4,
+        StreamCodec<P5> codec5, Function<R, P5> getter5,
+        StreamCodec<P6> codec6, Function<R, P6> getter6,
+        StreamCodec<P7> codec7, Function<R, P7> getter7,
+        StreamCodec<P8> codec8, Function<R, P8> getter8,
+        StreamCodec<P9> codec9, Function<R, P9> getter9,
+        StreamCodec<P10> codec10, Function<R, P10> getter10,
+        StreamCodec<P11> codec11, Function<R, P11> getter11,
+        StreamCodec<P12> codec12, Function<R, P12> getter12,
+        StreamCodec<P13> codec13, Function<R, P13> getter13,
+        StreamCodec<P14> codec14, Function<R, P14> getter14,
+        StreamCodec<P15> codec15, Function<R, P15> getter15,
+        StreamCodec<P16> codec16, Function<R, P16> getter16,
+        StreamCodec<P17> codec17, Function<R, P17> getter17,
+        StreamCodec<P18> codec18, Function<R, P18> getter18,
+        StreamCodec<P19> codec19, Function<R, P19> getter19,
+        StreamCodec<P20> codec20, Function<R, P20> getter20,
+        StreamCodec<P21> codec21, Function<R, P21> getter21,
+        StreamCodec<P22> codec22, Function<R, P22> getter22,
+        StreamCodec<P23> codec23, Function<R, P23> getter23,
+        StreamCodec<P24> codec24, Function<R, P24> getter24,
+        Function24<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, R> supplier
+    ) {
+        return new StreamCodec<>() {
+            @Override
+            public void write(ByteBuf buffer, R value) {
+                codec1.write(buffer, getter1.apply(value));
+                codec2.write(buffer, getter2.apply(value));
+                codec3.write(buffer, getter3.apply(value));
+                codec4.write(buffer, getter4.apply(value));
+                codec5.write(buffer, getter5.apply(value));
+                codec6.write(buffer, getter6.apply(value));
+                codec7.write(buffer, getter7.apply(value));
+                codec8.write(buffer, getter8.apply(value));
+                codec9.write(buffer, getter9.apply(value));
+                codec10.write(buffer, getter10.apply(value));
+                codec11.write(buffer, getter11.apply(value));
+                codec12.write(buffer, getter12.apply(value));
+                codec13.write(buffer, getter13.apply(value));
+                codec14.write(buffer, getter14.apply(value));
+                codec15.write(buffer, getter15.apply(value));
+                codec16.write(buffer, getter16.apply(value));
+                codec17.write(buffer, getter17.apply(value));
+                codec18.write(buffer, getter18.apply(value));
+                codec19.write(buffer, getter19.apply(value));
+                codec20.write(buffer, getter20.apply(value));
+                codec21.write(buffer, getter21.apply(value));
+                codec22.write(buffer, getter22.apply(value));
+                codec23.write(buffer, getter23.apply(value));
+                codec24.write(buffer, getter24.apply(value));
+            }
+
+            @Override
+            public R read(ByteBuf buffer) {
+                P1 result1 = codec1.read(buffer);
+                P2 result2 = codec2.read(buffer);
+                P3 result3 = codec3.read(buffer);
+                P4 result4 = codec4.read(buffer);
+                P5 result5 = codec5.read(buffer);
+                P6 result6 = codec6.read(buffer);
+                P7 result7 = codec7.read(buffer);
+                P8 result8 = codec8.read(buffer);
+                P9 result9 = codec9.read(buffer);
+                P10 result10 = codec10.read(buffer);
+                P11 result11 = codec11.read(buffer);
+                P12 result12 = codec12.read(buffer);
+                P13 result13 = codec13.read(buffer);
+                P14 result14 = codec14.read(buffer);
+                P15 result15 = codec15.read(buffer);
+                P16 result16 = codec16.read(buffer);
+                P17 result17 = codec17.read(buffer);
+                P18 result18 = codec18.read(buffer);
+                P19 result19 = codec19.read(buffer);
+                P20 result20 = codec20.read(buffer);
+                P21 result21 = codec21.read(buffer);
+                P22 result22 = codec22.read(buffer);
+                P23 result23 = codec23.read(buffer);
+                P24 result24 = codec24.read(buffer);
+                return supplier.apply(result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12, result13, result14, result15, result16, result17, result18, result19, result20, result21, result22, result23, result24);
+            }
+        };
+    }
+
+    public static <R, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, P25> StreamCodec<R> of(
+        StreamCodec<P1> codec1, Function<R, P1> getter1,
+        StreamCodec<P2> codec2, Function<R, P2> getter2,
+        StreamCodec<P3> codec3, Function<R, P3> getter3,
+        StreamCodec<P4> codec4, Function<R, P4> getter4,
+        StreamCodec<P5> codec5, Function<R, P5> getter5,
+        StreamCodec<P6> codec6, Function<R, P6> getter6,
+        StreamCodec<P7> codec7, Function<R, P7> getter7,
+        StreamCodec<P8> codec8, Function<R, P8> getter8,
+        StreamCodec<P9> codec9, Function<R, P9> getter9,
+        StreamCodec<P10> codec10, Function<R, P10> getter10,
+        StreamCodec<P11> codec11, Function<R, P11> getter11,
+        StreamCodec<P12> codec12, Function<R, P12> getter12,
+        StreamCodec<P13> codec13, Function<R, P13> getter13,
+        StreamCodec<P14> codec14, Function<R, P14> getter14,
+        StreamCodec<P15> codec15, Function<R, P15> getter15,
+        StreamCodec<P16> codec16, Function<R, P16> getter16,
+        StreamCodec<P17> codec17, Function<R, P17> getter17,
+        StreamCodec<P18> codec18, Function<R, P18> getter18,
+        StreamCodec<P19> codec19, Function<R, P19> getter19,
+        StreamCodec<P20> codec20, Function<R, P20> getter20,
+        StreamCodec<P21> codec21, Function<R, P21> getter21,
+        StreamCodec<P22> codec22, Function<R, P22> getter22,
+        StreamCodec<P23> codec23, Function<R, P23> getter23,
+        StreamCodec<P24> codec24, Function<R, P24> getter24,
+        StreamCodec<P25> codec25, Function<R, P25> getter25,
+        Function25<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, P23, P24, P25, R> supplier
+    ) {
+        return new StreamCodec<>() {
+            @Override
+            public void write(ByteBuf buffer, R value) {
+                codec1.write(buffer, getter1.apply(value));
+                codec2.write(buffer, getter2.apply(value));
+                codec3.write(buffer, getter3.apply(value));
+                codec4.write(buffer, getter4.apply(value));
+                codec5.write(buffer, getter5.apply(value));
+                codec6.write(buffer, getter6.apply(value));
+                codec7.write(buffer, getter7.apply(value));
+                codec8.write(buffer, getter8.apply(value));
+                codec9.write(buffer, getter9.apply(value));
+                codec10.write(buffer, getter10.apply(value));
+                codec11.write(buffer, getter11.apply(value));
+                codec12.write(buffer, getter12.apply(value));
+                codec13.write(buffer, getter13.apply(value));
+                codec14.write(buffer, getter14.apply(value));
+                codec15.write(buffer, getter15.apply(value));
+                codec16.write(buffer, getter16.apply(value));
+                codec17.write(buffer, getter17.apply(value));
+                codec18.write(buffer, getter18.apply(value));
+                codec19.write(buffer, getter19.apply(value));
+                codec20.write(buffer, getter20.apply(value));
+                codec21.write(buffer, getter21.apply(value));
+                codec22.write(buffer, getter22.apply(value));
+                codec23.write(buffer, getter23.apply(value));
+                codec24.write(buffer, getter24.apply(value));
+                codec25.write(buffer, getter25.apply(value));
+            }
+
+            @Override
+            public R read(ByteBuf buffer) {
+                P1 result1 = codec1.read(buffer);
+                P2 result2 = codec2.read(buffer);
+                P3 result3 = codec3.read(buffer);
+                P4 result4 = codec4.read(buffer);
+                P5 result5 = codec5.read(buffer);
+                P6 result6 = codec6.read(buffer);
+                P7 result7 = codec7.read(buffer);
+                P8 result8 = codec8.read(buffer);
+                P9 result9 = codec9.read(buffer);
+                P10 result10 = codec10.read(buffer);
+                P11 result11 = codec11.read(buffer);
+                P12 result12 = codec12.read(buffer);
+                P13 result13 = codec13.read(buffer);
+                P14 result14 = codec14.read(buffer);
+                P15 result15 = codec15.read(buffer);
+                P16 result16 = codec16.read(buffer);
+                P17 result17 = codec17.read(buffer);
+                P18 result18 = codec18.read(buffer);
+                P19 result19 = codec19.read(buffer);
+                P20 result20 = codec20.read(buffer);
+                P21 result21 = codec21.read(buffer);
+                P22 result22 = codec22.read(buffer);
+                P23 result23 = codec23.read(buffer);
+                P24 result24 = codec24.read(buffer);
+                P25 result25 = codec25.read(buffer);
+                return supplier.apply(result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12, result13, result14, result15, result16, result17, result18, result19, result20, result21, result22, result23, result24, result25);
+            }
+        };
+    }
+
 }
