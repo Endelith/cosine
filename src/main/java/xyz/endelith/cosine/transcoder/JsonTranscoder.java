@@ -196,8 +196,20 @@ public final class JsonTranscoder implements Transcoder<JsonElement> {
             }
             case JsonPrimitive primitive when primitive.isBoolean() ->
                 target.encodeBoolean(primitive.getAsBoolean());
-            case JsonPrimitive primitive when primitive.isNumber() ->
-                target.encodeDouble(primitive.getAsDouble());
+            case JsonPrimitive primitive when primitive.isNumber() -> {
+                Number number = primitive.getAsNumber();
+                String raw = primitive.getAsString();
+                if (!raw.contains(".")) { 
+                    long longVal = number.longValue();
+                    if (longVal >= Integer.MIN_VALUE && longVal <= Integer.MAX_VALUE) {
+                        yield target.encodeInt((int) longVal);
+                    } else {
+                        yield target.encodeLong(longVal);
+                    }
+                } else { 
+                    yield target.encodeDouble(number.doubleValue());
+                }
+            }
             case JsonPrimitive primitive when primitive.isString() ->
                 target.encodeString(primitive.getAsString());
             default -> throw new IllegalArgumentException("Unsupported JSON type: " + value);
