@@ -119,6 +119,12 @@ public interface Transcoder<T> {
         return result;
     }
 
+    default <O> O convertTo(Transcoder<O> target, T value) {
+        throw new UnsupportedOperationException(
+            "convertTo not supported by " + this.getClass().getSimpleName()
+        );
+    }
+
     interface ListBuilder<T> {
         ListBuilder<T> add(T value);
         T build();

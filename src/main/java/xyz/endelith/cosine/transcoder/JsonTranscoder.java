@@ -2,6 +2,7 @@ package xyz.endelith.cosine.transcoder;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -173,5 +174,33 @@ public final class JsonTranscoder implements Transcoder<JsonElement> {
     @Override
     public boolean decodeBoolean(JsonElement value) {
         return value.getAsBoolean();
+    }
+
+    @Override
+    public <O> O convertTo(Transcoder<O> target, JsonElement value) {
+        return switch (value) {
+            case JsonNull _ -> target.encodeNull();
+            case JsonObject object -> {
+                Transcoder.VirtualMapBuilder<O> map = target.encodeMap();
+                for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
+                    map.put(entry.getKey(), convertTo(target, entry.getValue()));
+                }
+                yield map.build();
+            }
+            case JsonArray array -> {
+                Transcoder.ListBuilder<O> list = target.encodeList(array.size());
+                for (JsonElement element : array) {
+                    list.add(convertTo(target, element));
+                }
+                yield list.build();
+            }
+            case JsonPrimitive primitive when primitive.isBoolean() ->
+                target.encodeBoolean(primitive.getAsBoolean());
+            case JsonPrimitive primitive when primitive.isNumber() ->
+                target.encodeDouble(primitive.getAsDouble());
+            case JsonPrimitive primitive when primitive.isString() ->
+                target.encodeString(primitive.getAsString());
+            default -> throw new IllegalArgumentException("Unsupported JSON type: " + value);
+        };
     }
 }
