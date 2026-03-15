@@ -19,10 +19,7 @@ public record RawValueCodec<T>() implements Codec<RawValue> {
             if (this.transcoder == target) {
                 return (X) value;
             }
-    
-            throw new IllegalStateException(
-                "Cannot convert RawValue from " + transcoder + " to " + target
-            );
+            return this.transcoder.convertTo(target, this.value);
         }
     }
 

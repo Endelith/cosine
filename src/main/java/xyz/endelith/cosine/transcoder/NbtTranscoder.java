@@ -3,14 +3,18 @@ package xyz.endelith.cosine.transcoder;
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import net.kyori.adventure.nbt.BinaryTag;
+import net.kyori.adventure.nbt.ByteArrayBinaryTag;
 import net.kyori.adventure.nbt.ByteBinaryTag;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.nbt.DoubleBinaryTag;
 import net.kyori.adventure.nbt.EndBinaryTag;
 import net.kyori.adventure.nbt.FloatBinaryTag;
+import net.kyori.adventure.nbt.IntArrayBinaryTag;
 import net.kyori.adventure.nbt.IntBinaryTag;
 import net.kyori.adventure.nbt.ListBinaryTag;
+import net.kyori.adventure.nbt.LongArrayBinaryTag;
 import net.kyori.adventure.nbt.LongBinaryTag;
 import net.kyori.adventure.nbt.NumberBinaryTag;
 import net.kyori.adventure.nbt.ShortBinaryTag;
@@ -226,6 +230,39 @@ public final class NbtTranscoder implements Transcoder<BinaryTag> {
                 }
                 return tag;
             }
+        };
+    }
+
+    @Override
+    public <O> O convertTo(Transcoder<O> target, BinaryTag value) {
+        return switch (value) {
+            case EndBinaryTag _ -> target.encodeNull();
+            case ByteBinaryTag byteTag -> target.encodeByte(byteTag.byteValue());
+            case ShortBinaryTag shortTag -> target.encodeShort(shortTag.shortValue());
+            case IntBinaryTag intTag -> target.encodeInt(intTag.intValue());
+            case LongBinaryTag longTag -> target.encodeLong(longTag.longValue());
+            case FloatBinaryTag floatTag -> target.encodeFloat(floatTag.floatValue());
+            case DoubleBinaryTag doubleTag -> target.encodeDouble(doubleTag.doubleValue());
+            case StringBinaryTag stringTag -> target.encodeString(stringTag.value());
+            case ByteArrayBinaryTag byteArrayTag -> target.encodeByteArray(byteArrayTag.value());
+            case IntArrayBinaryTag intArrayTag -> target.encodeIntArray(intArrayTag.value());
+            case LongArrayBinaryTag longArrayTag -> target.encodeLongArray(longArrayTag.value());
+            case ListBinaryTag listTag -> {
+                ListBinaryTag unwrapped = listTag.unwrapHeterogeneity();
+                Transcoder.ListBuilder<O> list = target.encodeList(unwrapped.size());
+                for (BinaryTag element : unwrapped) {
+                    list.add(convertTo(target, element));
+                }
+                yield list.build();
+            }
+            case CompoundBinaryTag compoundTag -> {
+                Transcoder.VirtualMapBuilder<O> map = target.encodeMap();
+                for (Map.Entry<String, ? extends BinaryTag> entry : compoundTag) {
+                    map.put(entry.getKey(), convertTo(target, entry.getValue()));
+                }
+                yield map.build();
+            }
+            default -> throw new IllegalArgumentException("Unsupported NBT type: " + value);
         };
     }
 }
